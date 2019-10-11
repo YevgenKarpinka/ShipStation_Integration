@@ -1,0 +1,26 @@
+{
+  "id": "5f0be194-5d00-42e5-bd3d-19f7ca4db1ef",
+  "name": "ShipStation Integration",
+  "publisher": "TComTech publisher",
+  "version": "1.0.0.0",
+  "brief": "",
+  "description": "",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "",
+  "logo": "",
+  "dependencies": [],
+  "screenshots": [],
+  "platform": "14.0.0.0",
+  "application": "14.0.0.0",
+  "idRanges": [
+    {
+      "from": 50000,
+      "to": 50149
+    }
+  ],
+  "contextSensitiveHelpUrl": "https://ShipStationIntegration.com/help/",
+  "showMyCode": true,
+  "runtime": "3.0"
+}
