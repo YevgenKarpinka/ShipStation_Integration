@@ -150,70 +150,24 @@ codeunit 50001 "ShipStation Mgt."
     var
         _SAS: Record "Shipping Agent Services";
     begin
-        _SAS.SetRange("Shipping Agent Code", _CarrierCode);
-        _SAS.SetRange(Description, _ServiceCode);
-        if not _SAS.FindSet(false, false) then begin
-            exit(CreateShippingAgentService(_ServiceCode, _CarrierCode))
-        end else
-            exit(_SAS.Code)
+        _SAS.SetRange("SS Carrier Code", _CarrierCode);
+        _SAS.SetRange("SS Code", _ServiceCode);
+        if _SAS.FindFirst() then
+            exit(_SAS.Code);
+
+        GetServicesFromShipStation(_CarrierCode);
+        _SAS.FindFirst();
     end;
 
-    local procedure CreateShippingAgentService(_ServiceCode: Text[100]; _CarrierCode: Text[50]): code[10]
-    var
-        _SAS: Record "Shipping Agent Services";
-    begin
-        with _SAS do begin
-            Init();
-            "Shipping Agent Code" := _CarrierCode;
-            Code := IncStr(GetLastShippingAgentServiceCode);
-            Description := _ServiceCode;
-            Insert();
-            exit(Code);
-        end;
-    end;
-
-    local procedure GetLastShippingAgentServiceCode(): Code[10]
-    var
-        _SAS: Record "Shipping Agent Services";
-        lblSASCode: Label 'SAS-001';
-    begin
-        if _SAS.IsEmpty then exit(lblSASCode);
-        _SAS.FindLast();
-        exit(_SAS.Code);
-    end;
-
-    local procedure GetShippingAgent(_CarrierName: Text[50]): Code[10]
+    local procedure GetShippingAgent(_CarrierCode: Text[50]): Code[10]
     var
         _SA: Record "Shipping Agent";
     begin
-        _SA.SetRange(Name, _CarrierName);
-        if not _SA.FindSet(false, false) then
-            exit(CreateShippingAgent(_CarrierName))
-        else
+        _SA.SetRange("SS Code", _CarrierCode);
+        if _SA.FindFirst() then
             exit(_SA.Code)
-    end;
-
-    local procedure CreateShippingAgent(_CarrierName: Text[50]): code[10]
-    var
-        _SA: Record "Shipping Agent";
-    begin
-        with _SA do begin
-            Init();
-            _SA.Code := IncStr(GetLastShippingAgentCode);
-            _SA.Name := _CarrierName;
-            Insert();
-            exit(Code);
-        end;
-    end;
-
-    local procedure GetLastShippingAgentCode(): Code[10]
-    var
-        _SA: Record "Shipping Agent";
-        lblSACode: Label 'SA-001';
-    begin
-        if _SA.IsEmpty then exit(lblSACode);
-        _SA.FindLast();
-        exit(_SA.Code);
+        else
+            GetCarrierFromShipStation(_CarrierCode);
     end;
 
     procedure CreateOrderInShipStation(DocNo: Code[20]): Boolean
@@ -624,6 +578,32 @@ codeunit 50001 "ShipStation Mgt."
             _String := StrSubstNo('%1%2', '0', _String);
     end;
 
+    procedure GetCarrierFromShipStation(_SSCode: Text[20]): Code[10]
+    var
+        JSText: Text;
+        JSObject: JsonObject;
+        CarrierToken: JsonToken;
+        Counter: Integer;
+        txtCarrierCode: Text[20];
+        ShippingAgent: Record "Shipping Agent";
+    begin
+        JSText := Connect2ShipStation(6, '', _SSCode);
+
+        JSObject.ReadFrom(JSText);
+        txtCarrierCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'code').AsValue().AsText(), 1, MaxStrLen(ShippingAgent."SS Code"));
+        ShippingAgent.SetRange("SS Code", txtCarrierCode);
+        if not ShippingAgent.FindFirst() then
+            with ShippingAgent do begin
+                Init();
+                Code := GetLastCarrierCode();
+                Name := CopyStr(GetJSToken(CarrierToken.AsObject(), 'name').AsValue().AsText(), 1, MaxStrLen(ShippingAgent.Name));
+                "SS Code" := txtCarrierCode;
+                "SS Provider Id" := GetJSToken(CarrierToken.AsObject(), 'shippingProviderId').AsValue().AsInteger();
+                Insert();
+            end;
+        exit(ShippingAgent.Code);
+    end;
+
     procedure GetCarriersFromShipStation(): Boolean
     var
         JSText: Text;
@@ -631,49 +611,71 @@ codeunit 50001 "ShipStation Mgt."
         CarriersJSArray: JsonArray;
         CarrierToken: JsonToken;
         Counter: Integer;
-        txtCarrierCode: Text[10];
+        txtCarrierCode: Text[20];
         ShippingAgent: Record "Shipping Agent";
     begin
         JSText := Connect2ShipStation(4, '', '');
 
         CarriersJSArray.ReadFrom(JSText);
         foreach CarrierToken in CarriersJSArray do begin
-            txtCarrierCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'code').AsValue().AsText(), 1, MaxStrLen(ShippingAgent.Code));
-            if not ShippingAgent.Get(txtCarrierCode) then
+            txtCarrierCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'code').AsValue().AsText(), 1, MaxStrLen(ShippingAgent."SS Code"));
+            ShippingAgent.SetRange("SS Code", txtCarrierCode);
+            if not ShippingAgent.FindFirst() then
                 with ShippingAgent do begin
                     Init();
-                    Code := txtCarrierCode;
+                    Code := '';
                     Name := CopyStr(GetJSToken(CarrierToken.AsObject(), 'name').AsValue().AsText(), 1, MaxStrLen(ShippingAgent.Name));
+                    "SS Code" := txtCarrierCode;
+                    "SS Provider Id" := GetJSToken(CarrierToken.AsObject(), 'shippingProviderId').AsValue().AsInteger();
                     Insert();
                 end;
         end;
         exit(true);
     end;
 
-    procedure GetServicesFromShipStation(): Boolean
+    local procedure GetLastCarrierCode(): Code[10]
+    var
+        ShippingAgent: Record "Shipping Agent";
+        lblSA_Code: Label 'SA-0001';
+    begin
+        if ShippingAgent.FindLast() then exit(IncStr(ShippingAgent.Code));
+        exit(lblSA_Code);
+    end;
+
+    procedure GetServicesFromShipStation(txtCarrierCode: Text[20]): Boolean
     var
         JSText: Text;
         JSObject: JsonObject;
         CarriersJSArray: JsonArray;
         CarrierToken: JsonToken;
         Counter: Integer;
-        txtCarrierCode: Text[10];
-        ShippingAgent: Record "Shipping Agent";
+        ShippingAgentServices: Record "Shipping Agent Services";
+        txtServiceCode: Text[50];
     begin
-        JSText := Connect2ShipStation(4, '', '');
+        JSText := Connect2ShipStation(4, '', txtCarrierCode);
 
         CarriersJSArray.ReadFrom(JSText);
         foreach CarrierToken in CarriersJSArray do begin
-            txtCarrierCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'code').AsValue().AsText(), 1, MaxStrLen(ShippingAgent.Code));
-            if not ShippingAgent.Get(txtCarrierCode) then
-                with ShippingAgent do begin
-                    Init();
-                    Code := txtCarrierCode;
-                    Name := CopyStr(GetJSToken(CarrierToken.AsObject(), 'name').AsValue().AsText(), 1, MaxStrLen(ShippingAgent.Name));
-                    Insert();
-                end;
+            txtCarrierCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'carrierCode').AsValue().AsText(), 1, MaxStrLen(ShippingAgentServices."SS Carrier Code"));
+            txtCarrierCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'code').AsValue().AsText(), 1, MaxStrLen(ShippingAgentServices."SS Code"));
+            with ShippingAgentServices do begin
+                Init();
+                Code := GetLastCarrierServiceCode();
+                "SS Code" := txtCarrierCode;
+                Description := CopyStr(GetJSToken(CarrierToken.AsObject(), 'name').AsValue().AsText(), 1, MaxStrLen(ShippingAgentServices.Description));
+                Insert();
+            end;
         end;
         exit(true);
+    end;
+
+    local procedure GetLastCarrierServiceCode(): Code[10]
+    var
+        _SAS: Record "Shipping Agent Services";
+        lblSASCode: Label 'SAS-0001';
+    begin
+        if _SAS.FindLast() then exit(IncStr(_SAS.Code));
+        exit(lblSASCode);
     end;
 
     var
