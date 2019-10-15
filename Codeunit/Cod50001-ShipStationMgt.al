@@ -10,7 +10,7 @@ codeunit 50001 "ShipStation Mgt."
         testMode := _testMode;
     end;
 
-    procedure Connect2ShipStation(SPCode: Option " ",getOrder,createOrder,crateLabel; Body2Request: Text; newURL: Text): Text
+    procedure Connect2ShipStation(SPCode: Integer; Body2Request: Text; newURL: Text): Text
     var
         TempBlob: Record TempBlob;
         SourceParameters: Record "Source Parameters";
@@ -106,7 +106,7 @@ codeunit 50001 "ShipStation Mgt."
                 // _SH."Shipping Agent Service Code" := GetShippingAgentService(txtServiceCode, txtCarrierCode);
                 // _SH."ShipStation Order Status" := _SH."ShipStation Order Status"::Received;
                 // _SH."ShipStation Status" := GetJSToken(JSObject, 'orderStatus').AsValue().AsText();
-                _SH.Modify();
+                // _SH.Modify();
 
                 if txtOrders = '' then
                     txtOrders := GetJSToken(JSObject, 'orderNumber').AsValue().AsText()
@@ -624,18 +624,56 @@ codeunit 50001 "ShipStation Mgt."
             _String := StrSubstNo('%1%2', '0', _String);
     end;
 
-    procedure GetCarriersFromShipStation()
+    procedure GetCarriersFromShipStation(): Boolean
     var
-        myInt: Integer;
+        JSText: Text;
+        JSObject: JsonObject;
+        CarriersJSArray: JsonArray;
+        CarrierToken: JsonToken;
+        Counter: Integer;
+        txtCarrierCode: Text[10];
+        ShippingAgent: Record "Shipping Agent";
     begin
-        // to do
+        JSText := Connect2ShipStation(4, '', '');
+
+        CarriersJSArray.ReadFrom(JSText);
+        foreach CarrierToken in CarriersJSArray do begin
+            txtCarrierCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'code').AsValue().AsText(), 1, MaxStrLen(ShippingAgent.Code));
+            if not ShippingAgent.Get(txtCarrierCode) then
+                with ShippingAgent do begin
+                    Init();
+                    Code := txtCarrierCode;
+                    Name := CopyStr(GetJSToken(CarrierToken.AsObject(), 'name').AsValue().AsText(), 1, MaxStrLen(ShippingAgent.Name));
+                    Insert();
+                end;
+        end;
+        exit(true);
     end;
 
-    procedure GetCarrierServicesFromShipStation()
+    procedure GetServicesFromShipStation(): Boolean
     var
-        myInt: Integer;
+        JSText: Text;
+        JSObject: JsonObject;
+        CarriersJSArray: JsonArray;
+        CarrierToken: JsonToken;
+        Counter: Integer;
+        txtCarrierCode: Text[10];
+        ShippingAgent: Record "Shipping Agent";
     begin
-        // to do
+        JSText := Connect2ShipStation(4, '', '');
+
+        CarriersJSArray.ReadFrom(JSText);
+        foreach CarrierToken in CarriersJSArray do begin
+            txtCarrierCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'code').AsValue().AsText(), 1, MaxStrLen(ShippingAgent.Code));
+            if not ShippingAgent.Get(txtCarrierCode) then
+                with ShippingAgent do begin
+                    Init();
+                    Code := txtCarrierCode;
+                    Name := CopyStr(GetJSToken(CarrierToken.AsObject(), 'name').AsValue().AsText(), 1, MaxStrLen(ShippingAgent.Name));
+                    Insert();
+                end;
+        end;
+        exit(true);
     end;
 
     var
