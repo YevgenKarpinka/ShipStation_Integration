@@ -1,24 +1,36 @@
-pageextension 50003 "Sales Order List Ext." extends "Sales Order List"
+pageextension 50005 "Sales Order Ext." extends "Sales Order"
 {
     layout
     {
         // Add changes to page layout here
-        addlast(Control1)
+
+
+        addafter(Control1900201301)
         {
-            field("ShipStation Status"; "ShipStation Status")
+            group(groupShipStation)
             {
-                ApplicationArea = All;
+                CaptionML = ENU = 'ShipStation', RUS = 'ShipStation';
 
-            }
-            field("ShipStation Order Status"; "ShipStation Order Status")
-            {
-                ApplicationArea = All;
+                field("ShipStation Order ID"; "ShipStation Order ID")
+                {
+                    ApplicationArea = All;
 
-            }
-            field("ShipStation Order ID"; "ShipStation Order ID")
-            {
-                ApplicationArea = All;
+                }
+                field("ShipStation Order Key"; "ShipStation Order Key")
+                {
+                    ApplicationArea = All;
 
+                }
+                field("ShipStation Order Status"; "ShipStation Order Status")
+                {
+                    ApplicationArea = All;
+
+                }
+                field("ShipStation Status"; "ShipStation Status")
+                {
+                    ApplicationArea = All;
+
+                }
             }
         }
     }

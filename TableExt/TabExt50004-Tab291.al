@@ -14,4 +14,12 @@ tableextension 50004 "Shipping Agent Ext." extends "Shipping Agent"
             Editable = false;
         }
     }
+
+    keys
+    {
+        key(SK1; "SS Code", "SS Provider Id")
+        {
+
+        }
+    }
 }

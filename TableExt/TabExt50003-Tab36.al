@@ -6,10 +6,12 @@ tableextension 50003 "Sales Header Ext." extends "Sales Header"
         field(50000; "ShipStation Order ID"; Integer)
         {
             CaptionML = ENU = 'ShipStation Order ID', RUS = 'Идентификатор Заказа ShipStation ';
+            Editable = false;
         }
         field(50001; "ShipStation Order Key"; Guid)
         {
             CaptionML = ENU = 'ShipStation Order Key', RUS = 'Ключ Заказа ShipStation';
+            Editable = false;
         }
         field(50002; "ShipStation Order Status"; Option)
         {
@@ -24,6 +26,14 @@ tableextension 50003 "Sales Header Ext." extends "Sales Header"
             DataClassification = ToBeClassified;
             CaptionML = ENU = 'ShipStation Status', RUS = 'Статус ShipStation';
             Editable = false;
+        }
+    }
+
+    keys
+    {
+        key(SK1; "ShipStation Order ID", "ShipStation Order Key", "ShipStation Order Status", "ShipStation Status")
+        {
+
         }
     }
 

@@ -15,6 +15,11 @@ tableextension 50005 "Shipping Agent Services Ext." extends "Shipping Agent Serv
         }
     }
 
-    var
-        myInt: Integer;
+    keys
+    {
+        key(SK1; "SS Carrier Code", "SS Code")
+        {
+
+        }
+    }
 }

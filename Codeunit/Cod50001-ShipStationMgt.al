@@ -30,9 +30,10 @@ codeunit 50001 "ShipStation Mgt."
 
         RequestMessage.Method := Format(SourceParameters."FSp RestMethod");
         if newURL = '' then
-            RequestMessage.SetRequestUri(newURL)
+            RequestMessage.SetRequestUri(SourceParameters."FSp URL")
         else
-            RequestMessage.SetRequestUri(SourceParameters."FSp URL");
+            RequestMessage.SetRequestUri(newURL);
+
         RequestMessage.GetHeaders(Headers);
         Headers.Add('Accept', SourceParameters."FSp Accept");
         if (SourceParameters."FSp AuthorizationFrameworkType" = SourceParameters."FSp AuthorizationFrameworkType"::OAuth2)
@@ -96,17 +97,6 @@ codeunit 50001 "ShipStation Mgt."
             JSObject := OrderJSToken.AsObject();
             if _SH.Get(_SH."Document Type"::Order, GetJSToken(JSObject, 'orderNumber').AsValue().AsText()) then begin
                 UpdateSalesHeaderFromShipStation(_SH."No.", JSObject);
-
-                // txtCarrierCode := CopyStr(GetJSToken(JSObject, 'carrierCode').AsValue().AsText(), 1, MaxStrLen(txtCarrierCode));
-                // txtServiceCode := CopyStr(GetJSToken(JSObject, 'serviceCode').AsValue().AsText(), 1, MaxStrLen(txtServiceCode));
-
-                // _SH."ShipStation Order ID" := GetJSToken(JSObject, 'orderId').AsValue().AsInteger();
-                // _SH."ShipStation Order Key" := GetJSToken(JSObject, 'orderKey').AsValue().AsText();
-                // _SH."Shipping Agent Code" := GetShippingAgent(txtCarrierCode);
-                // _SH."Shipping Agent Service Code" := GetShippingAgentService(txtServiceCode, txtCarrierCode);
-                // _SH."ShipStation Order Status" := _SH."ShipStation Order Status"::Received;
-                // _SH."ShipStation Status" := GetJSToken(JSObject, 'orderStatus').AsValue().AsText();
-                // _SH.Modify();
 
                 if txtOrders = '' then
                     txtOrders := GetJSToken(JSObject, 'orderNumber').AsValue().AsText()
@@ -184,7 +174,10 @@ codeunit 50001 "ShipStation Mgt."
 
         _Cust.Get(_SH."Sell-to Customer No.");
         JSObjectHeader.Add('orderNumber', _SH."No.");
+        JSObjectHeader.Add('orderKey', _SH."ShipStation Order Key");
         JSObjectHeader.Add('orderDate', Date2Text4JSON(_SH."Posting Date"));
+        JSObjectHeader.Add('paymentDate', Date2Text4JSON(_SH."Prepayment Due Date"));
+        JSObjectHeader.Add('shipByDate', Date2Text4JSON(_SH."Shipment Date"));
         JSObjectHeader.Add('orderStatus', txtAwaitingShipment);
         JSObjectHeader.Add('customerId', _Cust."No.");
         JSObjectHeader.Add('customerUsername', _Cust."E-Mail");
@@ -192,6 +185,8 @@ codeunit 50001 "ShipStation Mgt."
         JSObjectHeader.Add('billTo', jsonBillToFromSH(_SH."No."));
         JSObjectHeader.Add('shipTo', jsonShipToFromSH(_SH."No."));
         JSObjectHeader.Add('items', jsonItemsFromSL(_SH."No."));
+        // uncomment when dimensions will be solution
+        // JSObjectHeader.Add('dimensions', jsonDimentionsFromAttributeValue(_SH."No."));
         Clear(OrdersJSArray);
         JSObjectHeader.Add('tagIds', OrdersJSArray);
         JSObjectHeader.WriteTo(JSText);
@@ -202,6 +197,7 @@ codeunit 50001 "ShipStation Mgt."
         end;
 
         JSText := Connect2ShipStation(2, JSText, '');
+        Message(JSText);
         // update Sales Header from ShipStation
         JSObjectHeader.ReadFrom(JSText);
         UpdateSalesHeaderFromShipStation(DocNo, JSObjectHeader);
@@ -213,12 +209,18 @@ codeunit 50001 "ShipStation Mgt."
         _SH: Record "Sales Header";
         txtCarrierCode: Text[50];
         txtServiceCode: Text[100];
+        _jsonToken: JsonToken;
     begin
-        if (DocNo = '') or (not _SH.Get(_SH."Document Type"::Order, DocNo)) then exit(false);
+        if not _SH.Get(_SH."Document Type"::Order, DocNo) then exit(false);
         // update Sales Header from ShipStation
 
-        txtCarrierCode := CopyStr(GetJSToken(_jsonObject, 'carrierCode').AsValue().AsText(), 1, MaxStrLen(txtCarrierCode));
-        txtServiceCode := CopyStr(GetJSToken(_jsonObject, 'serviceCode').AsValue().AsText(), 1, MaxStrLen(txtServiceCode));
+        _jsonToken := GetJSToken(_jsonObject, 'carrierCode');
+        if not _jsonToken.AsValue().IsNull then
+            txtCarrierCode := CopyStr(GetJSToken(_jsonObject, 'carrierCode').AsValue().AsText(), 1, MaxStrLen(txtCarrierCode));
+
+        _jsonToken := GetJSToken(_jsonObject, 'serviceCode');
+        if not _jsonToken.AsValue().IsNull then
+            txtServiceCode := CopyStr(GetJSToken(_jsonObject, 'serviceCode').AsValue().AsText(), 1, MaxStrLen(txtServiceCode));
 
         _SH."ShipStation Order ID" := GetJSToken(_jsonObject, 'orderId').AsValue().AsInteger();
         _SH."ShipStation Order Key" := GetJSToken(_jsonObject, 'orderKey').AsValue().AsText();
@@ -532,6 +534,46 @@ codeunit 50001 "ShipStation Mgt."
         JSObjectLine.Add('value', _Item."Gross Weight");
         JSObjectLine.Add('units', 'grams');
         exit(JSObjectLine);
+    end;
+
+    procedure jsonDimentionsFromAttributeValue(_No: Code[20]): JsonObject
+    var
+        JSObjectLine: JsonObject;
+        lblInc: Label 'inches';
+        lblCm: Label 'centimeters';
+        txtUnits: Text;
+        decDimension: Decimal;
+    begin
+        if Evaluate(decDimension, GetItemAttributeValue(Database::"Sales Header", _No, 'length', txtUnits)) then
+            JSObjectLine.Add('length', decDimension);
+        if Evaluate(decDimension, GetItemAttributeValue(Database::"Sales Header", _No, 'width', txtUnits)) then
+            JSObjectLine.Add('width', decDimension);
+        if Evaluate(decDimension, GetItemAttributeValue(Database::"Sales Header", _No, 'height', txtUnits)) then
+            JSObjectLine.Add('height', decDimension);
+
+        if txtUnits in [lblCm, lblInc] then
+            JSObjectLine.Add('units', txtUnits)
+        else
+            JSObjectLine.Add('units', lblCm);
+        exit(JSObjectLine);
+    end;
+
+    local procedure GetItemAttributeValue(TableID: Integer; ItemNo: Code[20]; TokenKey: Text; var _Units: Text): Text
+    var
+        _ItemAttr: Record "Item Attribute";
+        _ItemAttrValue: Record "Item Attribute Value";
+        _ItemAttrValueMapping: Record "Item Attribute Value Mapping";
+        _UoM: Record "Unit of Measure";
+    begin
+        _ItemAttr.SetRange(Name, TokenKey);
+        if _ItemAttr.FindFirst() then begin
+            _Units := LowerCase(_ItemAttr."Unit of Measure");
+            if _ItemAttrValueMapping.Get(TableID, ItemNo, _ItemAttr.ID) then begin
+                _ItemAttrValue.Get(_ItemAttrValueMapping."Item Attribute ID", _ItemAttrValueMapping."Item Attribute Value ID");
+                exit(_ItemAttrValue.Value);
+            end;
+        end;
+        exit('');
     end;
 
     procedure GetJSToken(_JSONObject: JsonObject; TokenKey: Text) _JSONToken: JsonToken
