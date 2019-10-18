@@ -81,7 +81,7 @@ pageextension 50003 "Sales Order List Ext." extends "Sales Order List"
                         _SH: Record "Sales Header";
                     begin
                         CurrPage.SetSelectionFilter(_SH);
-                        ShipStationMgt.SetTestMode(true);
+                        // ShipStationMgt.SetTestMode(true);
                         if _SH.FindSet(false, false) then
                             repeat
                                 ShipStationMgt.CreateLabel2OrderInShipStation(_SH."No.");

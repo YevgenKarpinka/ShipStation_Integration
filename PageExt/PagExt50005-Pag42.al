@@ -66,7 +66,7 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                     var
                         ShipStationMgt: Codeunit "ShipStation Mgt.";
                         _SH: Record "Sales Header";
-                        lblOrdersList: TextConst ENU = 'Orders List:', RUS = 'Список Заказов:';
+                        lblOrdersList: TextConst ENU = 'List of Processed Orders:', RUS = 'Список обработанных Заказов:';
                         txtOrdersList: Text;
                     begin
                         CurrPage.SetSelectionFilter(_SH);
