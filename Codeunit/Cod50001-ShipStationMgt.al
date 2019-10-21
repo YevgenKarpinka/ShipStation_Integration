@@ -74,19 +74,15 @@ codeunit 50001 "ShipStation Mgt."
         JSText: Text;
         JSObject: JsonObject;
         OrdersJSArray: JsonArray;
-        JSLabelText: Label '{"orders":[{"orderNumber":"Test-International-API-DOCS1"},{"orderNumber":"Test-International-API-DOCS2"},{"orderNumber":"Test-International-API-DOCS3"},{"orderNumber":"Test-International-API-DOCS4"}],"total":4,"page":1,"pages":1}';
-        JSLabelText1: Label '{"orders":[{"orderId":987654321,"orderNumber":"Test-International-API-DOCS","orderKey":"Test-International-API-DOCS","orderDate":"2015-06-28T17:46:27.0000000","createDate":"2015-08-17T09:24:14.7800000","modifyDate":"2015-08-17T09:24:16.4800000","paymentDate":"2015-06-28T17:46:27.0000000","shipByDate":"2015-07-05T00:00:00.0000000","orderStatus":"awaiting_shipment","customerId":63310475,"customerUsername":"sholmes1854@methodsofdetection.com","customerEmail":"sholmes1854@methodsofdetection.com","billTo":{"name":"SherlockHolmes","company":null,"street1":null,"street2":null,"street3":null,"city":null,"state":null,"postalCode":null,"country":null,"phone":null,"residential":null,"addressVerified":null},"shipTo":{"name":"SherlockHolmes","company":"","street1":"221BBakerSt","street2":"","street3":null,"city":"London","state":"","postalCode":"NW16XE","country":"GB","phone":null,"residential":true,"addressVerified":"Addressnotyetvalidated"},"items":[{"orderItemId":136282568,"lineItemKey":null,"sku":"Ele-1234","name":"ElementaryDisguiseKit","imageUrl":null,"weight":{"value":12,"units":"ounces"},"quantity":2,"unitPrice":49.99,"taxAmount":null,"shippingAmount":null,"warehouseLocation":"Aisle1,Bin7","options":[],"productId":11780610,"fulfillmentSku":"Ele-1234","adjustment":false,"upc":null,"createDate":"2015-08-17T09:24:14.78","modifyDate":"2015-08-17T09:24:14.78"},{"orderItemId":136282569,"lineItemKey":null,"sku":"CN-9876","name":"FineWhiteOakCane","imageUrl":null,"weight":{"value":80,"units":"ounces"},"quantity":1,"unitPrice":225,"taxAmount":null,"shippingAmount":null,"warehouseLocation":"Aisle7,Bin34","options":[],"productId":11780609,"fulfillmentSku":null,"adjustment":false,"upc":null,"createDate":"2015-08-17T09:24:14.78","modifyDate":"2015-08-17T09:24:14.78"}],"orderTotal":387.97,"amountPaid":412.97,"taxAmount":27.99,"shippingAmount":35,"customerNotes":"Pleasebecarefulwhenpackingthedisguisekitsinwiththecane.","internalNotes":"Mr.Holmescalledtoupgradehisshippingtoexpedited","gift":false,"giftMessage":null,"paymentMethod":null,"requestedShippingService":"PriorityMailInt","carrierCode":"stamps_com","serviceCode":"usps_priority_mail_international","packageCode":"package","confirmation":"delivery","shipDate":"2015-04-25","holdUntilDate":null,"weight":{"value":104,"units":"ounces"},"dimensions":{"units":"inches","length":40,"width":7,"height":5},"insuranceOptions":{"provider":null,"insureShipment":false,"insuredValue":0},"internationalOptions":{"contents":"merchandise","customsItems":[{"customsItemId":11558268,"description":"FineWhiteOakCane","quantity":1,"value":225,"harmonizedTariffCode":null,"countryOfOrigin":"US"},{"customsItemId":11558267,"description":"ElementaryDisguiseKit","quantity":2,"value":49.99,"harmonizedTariffCode":null,"countryOfOrigin":"US"}],"nonDelivery":"return_to_sender"},"advancedOptions":{"warehouseId":98765,"nonMachinable":false,"saturdayDelivery":false,"containsAlcohol":false,"mergedOrSplit":false,"mergedIds":[],"parentId":null,"storeId":12345,"customField1":"SKU:CN-9876x1","customField2":"SKU:Ele-123x2","customField3":null,"source":null,"billToParty":null,"billToAccount":null,"billToPostalCode":null,"billToCountryCode":null},"tagIds":null,"userId":null,"externallyFulfilled":false,"externallyFulfilledBy":null},{"orderId":123456789,"orderNumber":"TEST-ORDER-API-DOCS","orderKey":"0f6bec18-9-4771-83aa-f392d84f4c74","orderDate":"2015-06-29T08:46:27.0000000","createDate":"2015-07-16T14:00:34.8230000","modifyDate":"2015-08-17T09:21:59.4430000","paymentDate":"2015-06-29T08:46:27.0000000","shipByDate":"2015-07-05T00:00:00.0000000","orderStatus":"awaiting_shipment","customerId":37701499,"customerUsername":"headhoncho@whitehouse.gov","customerEmail":"headhoncho@whitehouse.gov","billTo":{"name":"ThePresident","company":null,"street1":null,"street2":null,"street3":null,"city":null,"state":null,"postalCode":null,"country":null,"phone":null,"residential":null,"addressVerified":null},"shipTo":{"name":"ThePresident","company":"USGovt","street1":"1600PennsylvaniaAve","street2":"OvalOffice","street3":null,"city":"Washington","state":"DC","postalCode":"20500","country":"US","phone":"555-555-5555","residential":false,"addressVerified":"Addressvalidationwarning"},"items":[{"orderItemId":128836912,"lineItemKey":"vd08-MSLbtx","sku":"ABC123","name":"Testitem#1","imageUrl":null,"weight":{"value":24,"units":"ounces"},"quantity":2,"unitPrice":99.99,"taxAmount":null,"shippingAmount":null,"warehouseLocation":"Aisle1,Bin7","options":[{"name":"Size","value":"Large"}],"productId":7239919,"fulfillmentSku":null,"adjustment":false,"upc":null,"createDate":"2015-07-16T14:00:34.823","modifyDate":"2015-07-16T14:00:34.823"},{"orderItemId":128836913,"lineItemKey":null,"sku":"DISCOUNTCODE","name":"10%OFF","imageUrl":null,"weight":{"value":0,"units":"ounces"},"quantity":1,"unitPrice":-20.55,"taxAmount":null,"shippingAmount":null,"warehouseLocation":null,"options":[],"productId":null,"fulfillmentSku":null,"adjustment":true,"upc":null,"createDate":"2015-07-16T14:00:34.823","modifyDate":"2015-07-16T14:00:34.823"}],"orderTotal":194.43,"amountPaid":218.73,"taxAmount":5,"shippingAmount":10,"customerNotes":"Pleaseshipassoonaspossible!","internalNotes":"Customercalledandwouldliketoupgradeshipping","gift":true,"giftMessage":"Thankyou!","paymentMethod":"CreditCard","requestedShippingService":"PriorityMail","carrierCode":"fedex","serviceCode":"fedex_home_delivery","packageCode":"package","confirmation":"delivery","shipDate":"2015-07-02","holdUntilDate":null,"weight":{"value":48,"units":"ounces"},"dimensions":{"units":"inches","length":7,"width":5,"height":6},"insuranceOptions":{"provider":"carrier","insureShipment":true,"insuredValue":200},"internationalOptions":{"contents":null,"customsItems":null,"nonDelivery":null},"advancedOptions":{"warehouseId":98765,"nonMachinable":false,"saturdayDelivery":false,"containsAlcohol":false,"mergedOrSplit":false,"mergedIds":[],"parentId":null,"storeId":12345,"customField1":"Customdatathatyoucanaddtoanorder.SeeCustomField#2&#3formoreinfo!","customField2":"PerUIsettings,thisinformationcanappearonsomecarriersshippinglabels.Seelinkbelow","customField3":"https://help.shipstation.com/hc/en-us/articles/206639957","source":"Webstore","billToParty":null,"billToAccount":null,"billToPostalCode":null,"billToCountryCode":null},"tagIds":null,"userId":null,"externallyFulfilled":false,"externallyFulfilledBy":null}],"total":2,"page":1,"pages":0}';
         OrderJSToken: JsonToken;
         Counter: Integer;
         txtOrders: Text;
         txtCarrierCode: Text[50];
         txtServiceCode: Text[100];
         _SH: Record "Sales Header";
+        txtMessage: TextConst ENU = 'Order(s) Updated:\ %1', RUS = 'Заказ(ы) обновлен(ы):\ %1';
     begin
         JSText := Connect2ShipStation(1, '', '');
-        if testMode then
-            // JSText := JSLabelText; // for test
-            JSText := JSLabelText1; // for test
         JSObject.ReadFrom(JSText);
         OrdersJSArray := GetJSToken(JSObject, 'orders').AsArray();
 
@@ -103,7 +99,7 @@ codeunit 50001 "ShipStation Mgt."
             end;
 
         end;
-        Message('List of Orders No:\ %1', txtOrders);
+        Message(txtMessage, txtOrders);
 
         exit(txtOrders);
     end;
@@ -129,7 +125,6 @@ codeunit 50001 "ShipStation Mgt."
         txtOrders := GetJSToken(JSObject, 'orderNumber').AsValue().AsText();
         if _SH.Get(_SH."Document Type"::Order, GetJSToken(JSObject, 'orderNumber').AsValue().AsText()) then
             UpdateSalesHeaderFromShipStation(_SH."No.", JSObject);
-
     end;
 
     local procedure GetShippingAgentService(_ServiceCode: Text[100]; _CarrierCode: Text[50]): Code[10]
@@ -166,7 +161,6 @@ codeunit 50001 "ShipStation Mgt."
         JSObjectHeader: JsonObject;
         jsonTagsArray: JsonArray;
         txtAwaitingShipment: Label 'awaiting_shipment';
-        txtTest: Label '{"orderNumber":"TEST-ORDER-001","orderKey":"0f6bec18-3e89-4881-83aa-f392d84f4c74","orderDate":"2015-06-29T08:46:27.0000000","paymentDate":"2015-06-29T08:46:27.0000000","shipByDate":"2015-07-05T00:00:00.0000000","orderStatus":"awaiting_shipment","customerId":37701499,"customerUsername":"headhoncho@whitehouse.gov","customerEmail":"headhoncho@whitehouse.gov","billTo":{"name":"ThePresident","company":{},"street1":{},"street2":{},"street3":{},"city":{},"state":{},"postalCode":{},"country":{},"phone":{},"residential":{}},"shipTo":{"name":"ThePresident","company":"USGovt","street1":"1600PennsylvaniaAve","street2":"OvalOffice","street3":{},"city":"Washington","state":"DC","postalCode":"20500","country":"US","phone":"555-555-5555","residential":true},"items":[{"lineItemKey":"vd08-MSLbtx","sku":"ABC123","name":"Testitem#1","imageUrl":{},"weight":{"value":24,"units":"ounces"},"quantity":2,"unitPrice":99.99,"taxAmount":2.5,"shippingAmount":5,"warehouseLocation":"Aisle1,Bin7","options":[{"name":"Size","value":"Large"}],"productId":123456,"fulfillmentSku":{},"adjustment":false,"upc":"32-65-98"},{"lineItemKey":{},"sku":"DISCOUNTCODE","name":"10%OFF","imageUrl":{},"weight":{"value":0,"units":"ounces"},"quantity":1,"unitPrice":-20.55,"taxAmount":{},"shippingAmount":{},"warehouseLocation":{},"options":[],"productId":123456,"fulfillmentSku":"SKU-Discount","adjustment":true,"upc":{}}],"amountPaid":218.73,"taxAmount":5,"shippingAmount":10,"customerNotes":"Pleaseshipassoonaspossible!","internalNotes":"Customercalledandwouldliketoupgradeshipping","gift":true,"giftMessage":"Thankyou!","paymentMethod":"CreditCard","requestedShippingService":"PriorityMail","carrierCode":"fedex","serviceCode":"fedex_2day","packageCode":"package","confirmation":"delivery","shipDate":"2015-07-02","weight":{"value":25,"units":"ounces"},"dimensions":{"units":"inches","length":7,"width":5,"height":6},"insuranceOptions":{"provider":"carrier","insureShipment":true,"insuredValue":200},"internationalOptions":{"contents":{},"customsItems":{}},"advancedOptions":{"warehouseId":98765,"nonMachinable":false,"saturdayDelivery":false,"containsAlcohol":false,"mergedOrSplit":false,"mergedIds":[],"parentId":{},"storeId":12345,"customField1":"Customdatathatyoucanaddtoanorder.SeeCustomField#2&#3formoreinfo!","customField2":"PerUIsettings,thisinformationcanappearonsomecarriersshippinglabels.Seelinkbelow","customField3":"https://help.shipstation.com/hc/en-us/articles/206639957","source":"Webstore","billToParty":{},"billToAccount":{},"billToPostalCode":{},"billToCountryCode":{}},"tagIds":[53974]}';
     begin
         if (DocNo = '') or (not _SH.Get(_SH."Document Type"::Order, DocNo)) then exit(false);
 
@@ -191,13 +185,8 @@ codeunit 50001 "ShipStation Mgt."
         JSObjectHeader.Add('tagIds', jsonTagsArray);
         JSObjectHeader.WriteTo(JSText);
 
-        if testMode then begin
-            Message(JSText);
-            // JSText := txtTest;
-        end;
-
         JSText := Connect2ShipStation(2, JSText, '');
-        // Message(JSText);
+
         // update Sales Header from ShipStation
         JSObjectHeader.ReadFrom(JSText);
         UpdateSalesHeaderFromShipStation(DocNo, JSObjectHeader);
@@ -223,7 +212,6 @@ codeunit 50001 "ShipStation Mgt."
         if _SAS.Get(ShippingAgentCode, ShippingAgentServiceCode) then
             exit(_SAS."SS Code")
         else
-            // exit(_jsonNull.AsToken().AsValue().AsText());
             exit('');
     end;
 
@@ -267,50 +255,32 @@ codeunit 50001 "ShipStation Mgt."
         OrdersListCreateLabel: Text;
         OrdersCancelled: Text;
         txtLabel: Text;
+        txtTreckingNo: Text;
         WhseShipDocNo: Code[20];
-        txtTest: Label '{"orders":[{"orderId":987654321,"orderNumber":"TEST-INTERNATIONAL","orderKey":"Test-International-API-DOCS","orderDate":"2015-06-28T17:46:27.0000000","createDate":"2015-08-17T09:24:14.7800000","modifyDate":"2015-08-17T09:24:16.4800000","paymentDate":"2015-06-28T17:46:27.0000000","shipByDate":"2015-07-05T00:00:00.0000000","orderStatus":"awaiting_shipment","customerId":63310475,"customerUsername":"sholmes1854@methodsofdetection.com","customerEmail":"sholmes1854@methodsofdetection.com","billTo":{"name":"SherlockHolmes","company":{},"street1":{},"street2":{},"street3":{},"city":{},"state":{},"postalCode":{},"country":{},"phone":{},"residential":{},"addressVerified":{}},"shipTo":{"name":"SherlockHolmes","company":"","street1":"221BBakerSt","street2":"","street3":{},"city":"London","state":"","postalCode":"NW16XE","country":"GB","phone":{},"residential":true,"addressVerified":"Addressnotyetvalidated"},"items":[{"orderItemId":136282568,"lineItemKey":{},"sku":"Ele-1234","name":"ElementaryDisguiseKit","imageUrl":{},"weight":{"value":12,"units":"ounces"},"quantity":2,"unitPrice":49.99,"taxAmount":{},"shippingAmount":{},"warehouseLocation":"Aisle1,Bin7","options":[],"productId":11780610,"fulfillmentSku":"Ele-1234","adjustment":false,"upc":{},"createDate":"2015-08-17T09:24:14.78","modifyDate":"2015-08-17T09:24:14.78"},{"orderItemId":136282569,"lineItemKey":{},"sku":"CN-9876","name":"FineWhiteOakCane","imageUrl":{},"weight":{"value":80,"units":"ounces"},"quantity":1,"unitPrice":225,"taxAmount":{},"shippingAmount":{},"warehouseLocation":"Aisle7,Bin34","options":[],"productId":11780609,"fulfillmentSku":{},"adjustment":false,"upc":{},"createDate":"2015-08-17T09:24:14.78","modifyDate":"2015-08-17T09:24:14.78"}],"orderTotal":387.97,"amountPaid":412.97,"taxAmount":27.99,"shippingAmount":35,"customerNotes":"Pleasebecarefulwhenpackingthedisguisekitsinwiththecane.","internalNotes":"Mr.Holmescalledtoupgradehisshippingtoexpedited","gift":false,"giftMessage":{},"paymentMethod":{},"requestedShippingService":"PriorityMailInt","carrierCode":"stamps_com","serviceCode":"usps_priority_mail_international","packageCode":"package","confirmation":"delivery","shipDate":"2015-04-25","holdUntilDate":{},"weight":{"value":104,"units":"ounces"},"dimensions":{"units":"inches","length":40,"width":7,"height":5},"insuranceOptions":{"provider":{},"insureShipment":false,"insuredValue":0},"internationalOptions":{"contents":"merchandise","customsItems":[{"customsItemId":11558268,"description":"FineWhiteOakCane","quantity":1,"value":225,"harmonizedTariffCode":{},"countryOfOrigin":"US"},{"customsItemId":11558267,"description":"ElementaryDisguiseKit","quantity":2,"value":49.99,"harmonizedTariffCode":{},"countryOfOrigin":"US"}],"nonDelivery":"return_to_sender"},"advancedOptions":{"warehouseId":98765,"nonMachinable":false,"saturdayDelivery":false,"containsAlcohol":false,"mergedOrSplit":false,"mergedIds":[],"parentId":{},"storeId":12345,"customField1":"SKU:CN-9876x1","customField2":"SKU:Ele-123x2","customField3":{},"source":{},"billToParty":{},"billToAccount":{},"billToPostalCode":{},"billToCountryCode":{}},"tagIds":{},"userId":{},"externallyFulfilled":false,"externallyFulfilledBy":{}},{"orderId":123456789,"orderNumber":"TEST-ORDER-API-DOCS","orderKey":"0f6bec18-9-4771-83aa-f392d84f4c74","orderDate":"2015-06-29T08:46:27.0000000","createDate":"2015-07-16T14:00:34.8230000","modifyDate":"2015-08-17T09:21:59.4430000","paymentDate":"2015-06-29T08:46:27.0000000","shipByDate":"2015-07-05T00:00:00.0000000","orderStatus":"awaiting_shipment","customerId":37701499,"customerUsername":"headhoncho@whitehouse.gov","customerEmail":"headhoncho@whitehouse.gov","billTo":{"name":"ThePresident","company":{},"street1":{},"street2":{},"street3":{},"city":{},"state":{},"postalCode":{},"country":{},"phone":{},"residential":{},"addressVerified":{}},"shipTo":{"name":"ThePresident","company":"USGovt","street1":"1600PennsylvaniaAve","street2":"OvalOffice","street3":{},"city":"Washington","state":"DC","postalCode":"20500","country":"US","phone":"555-555-5555","residential":false,"addressVerified":"Addressvalidationwarning"},"items":[{"orderItemId":128836912,"lineItemKey":"vd08-MSLbtx","sku":"ABC123","name":"Testitem#1","imageUrl":{},"weight":{"value":24,"units":"ounces"},"quantity":2,"unitPrice":99.99,"taxAmount":{},"shippingAmount":{},"warehouseLocation":"Aisle1,Bin7","options":[{"name":"Size","value":"Large"}],"productId":7239919,"fulfillmentSku":{},"adjustment":false,"upc":{},"createDate":"2015-07-16T14:00:34.823","modifyDate":"2015-07-16T14:00:34.823"},{"orderItemId":128836913,"lineItemKey":{},"sku":"DISCOUNTCODE","name":"10%OFF","imageUrl":{},"weight":{"value":0,"units":"ounces"},"quantity":1,"unitPrice":-20.55,"taxAmount":{},"shippingAmount":{},"warehouseLocation":{},"options":[],"productId":{},"fulfillmentSku":{},"adjustment":true,"upc":{},"createDate":"2015-07-16T14:00:34.823","modifyDate":"2015-07-16T14:00:34.823"}],"orderTotal":194.43,"amountPaid":218.73,"taxAmount":5,"shippingAmount":10,"customerNotes":"Pleaseshipassoonaspossible!","internalNotes":"Customercalledandwouldliketoupgradeshipping","gift":true,"giftMessage":"Thankyou!","paymentMethod":"CreditCard","requestedShippingService":"PriorityMail","carrierCode":"fedex","serviceCode":"fedex_home_delivery","packageCode":"package","confirmation":"delivery","shipDate":"2015-07-02","holdUntilDate":{},"weight":{"value":48,"units":"ounces"},"dimensions":{"units":"inches","length":7,"width":5,"height":6},"insuranceOptions":{"provider":"carrier","insureShipment":true,"insuredValue":200},"internationalOptions":{"contents":{},"customsItems":{},"nonDelivery":{}},"advancedOptions":{"warehouseId":98765,"nonMachinable":false,"saturdayDelivery":false,"containsAlcohol":false,"mergedOrSplit":false,"mergedIds":[],"parentId":{},"storeId":12345,"customField1":"Customdatathatyoucanaddtoanorder.SeeCustomField#2&#3formoreinfo!","customField2":"PerUIsettings,thisinformationcanappearonsomecarriersshippinglabels.Seelinkbelow","customField3":"https://help.shipstation.com/hc/en-us/articles/206639957","source":"Webstore","billToParty":{},"billToAccount":{},"billToPostalCode":{},"billToCountryCode":{}},"tagIds":{},"userId":{},"externallyFulfilled":false,"externallyFulfilledBy":{}}],"total":2,"page":1,"pages":0}';
-        txtTestLabel: Label '{"shipmentId":72513480,"shipmentCost":7.3,"insuranceCost":0,"trackingNumber":"248201115029520","labelData":"JVBERi0xLjQKJeLjz9MKMiAwIG9iago8PC9MZW5ndGggNjIvRmlsdGVyL0ZsYXRlRGVjb2RlPj5zdHJlYW0KeJwr5HIK4TI2UzC2NFMISeFyDeEK5CpUMFQwAEJDBV0jCz0LBV1jY0M9I4XkXAX9iDRDBZd8hUAuAEdGC7cKZW5kc3RyZWFtCmVuZG9iago0IDAgb2JqCjw8L1R5cGUvUGFnZS9NZWRpYUJveFswIDAgMjg4IDQzMl0vUmVzb3VyY2VzPDwvUHJvY1NldCBbL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSV0vWE9iamVjdDw8L1hmMSAxIDAgUj4+Pj4vQ29udGVudHMgMiAwIFIvUGFyZW50","formData":null}';
-        txtLabelBase64: Label 'JVBERi0xLjQKJeLjz9MKMiAwIG9iago8PC9MZW5ndGggNjIvRmlsdGVyL0ZsYXRlRGVjb2RlPj5zdHJlYW0KeJwr5HIK4TI2UzC2NFMISeFyDeEK5CpUMFQwAEJDBV0jCz0LBV1jY0M9I4XkXAX9iDRDBZd8hUAuAEdGC7cKZW5kc3RyZWFtCmVuZG9iago0IDAgb2JqCjw8L1R5cGUvUGFnZS9NZWRpYUJveFswIDAgMjg4IDQzMl0vUmVzb3VyY2VzPDwvUHJvY1NldCBbL1BERiAvVGV4dCAvSW1hZ2VCIC9JbWFnZUMgL0ltYWdlSV0vWE9iamVjdDw8L1hmMSAxIDAgUj4+Pj4vQ29udGVudHMgMiAwIFIvUGFyZW50Li4uLg';
     begin
         if (DocNo = '') or (not _SH.Get(_SH."Document Type"::Order, DocNo)) or (_SH."ShipStation Order ID" = 0) then exit(false);
 
         // Get Order from Shipstation to Fill Variables
         JSText := Connect2ShipStation(1, '', StrSubstNo('/%1', _SH."ShipStation Order ID"));
 
-        // Message(JSText);
-
         JSObject.ReadFrom(JSText);
-
-        // txtOrderNo := GetJSToken(JSObject, 'orderNumber').AsValue().AsText();
-
-        // Fill Token from Order
-        // if testMode then begin
-        //     Message('Counter - %1\JSText:\%2', Counter, FillValuesFromOrder(JSObject));
-        //     JSText := txtTestLabel;
-        //     jsLabelObject.ReadFrom(JSText);
-        //     txtLabel := GetJSToken(jsLabelObject, 'labelData').AsValue().AsText();
-        //     WhseShipDocNo := '111';
-        //     txtLabel := txtLabelBase64;
-        //     AddLabel2Shipment(txtLabel, WhseShipDocNo);
-        // end else begin
-        // Create Label to Order
         JSText := Connect2ShipStation(3, FillValuesFromOrder(JSObject), '');
-        // if JSText <> '' then begin
 
         // Update Order From Label
         UpdateOrderFromLabel(DocNo, JSText);
 
         // FindWarehouseSipment(DocNo, WhseShipDocNo); // comment to test Create Label and Attache to Warehouse Shipment
-
         WhseShipDocNo := '111'; // code to test attache
 
         // Add Lable to Shipment
         jsLabelObject.ReadFrom(JSText);
         txtLabel := GetJSToken(jsLabelObject, 'labelData').AsValue().AsText();
-        AddLabel2Shipment(txtLabel, WhseShipDocNo);
-        // end;
-        // end;
-        Message('Label Created and Attached to Shipment! %1', WhseShipDocNo);
+        txtTreckingNo := GetJSToken(jsLabelObject, 'trackingNumber').AsValue().AsText();
+        // AddLabel2Shipment(txtLabel, WhseShipDocNo);
+
+        SaveLabel2Shipment(txtTreckingNo, txtLabel, WhseShipDocNo);
+
+        Message('Label Created and Attached to Warehouse Shipment %1', WhseShipDocNo);
     end;
 
     local procedure UpdateOrderFromLabel(DocNo: Code[20]; jsonText: Text);
@@ -339,117 +309,189 @@ codeunit 50001 "ShipStation Mgt."
         end;
     end;
 
-    local procedure AddLabel2Shipment(_txtLabelBase64: Text; _WhseShipDocNo: Code[20])
+    local procedure SaveLabel2Shipment(_txtTreckingNo: Text; _txtLabelBase64: Text; _WhseShipDocNo: Code[20])
     var
         TempBlob: Record TempBlob;
+        RecRef: RecordRef;
         WhseShipHeader: Record "Warehouse Shipment Header";
         lblOrder: TextConst ENU = 'labelWhseShmt', RUS = 'labelWhseShmt';
-        IncomingDocumentAttachment: Record "Incoming Document Attachment";
+        DocumentAttachment: Record "Document Attachment";
         FileName: Text;
     begin
+        RecRef.OPEN(DATABASE::"Warehouse Shipment Header");
         WhseShipHeader.Get(_WhseShipDocNo);
+        RecRef.GETTABLE(WhseShipHeader);
         TempBlob.FromBase64String(_txtLabelBase64);
-        FileName := StrSubstNo('%1-%2-%3.pdf', lblOrder, WhseShipHeader."No.", WhseShipHeader."Posting Date");
-        with IncomingDocumentAttachment do begin
-            SetRange("Incoming Document Entry No.", GetLastIncomingDocumentEntryNo);
-            SetRange("Document No.", WhseShipHeader."No.");
-            SetRange("Posting Date", WhseShipHeader."Posting Date");
-            Content := TempBlob.Blob;
-        end;
-        ImportAttachment(IncomingDocumentAttachment, FileName, TempBlob);
+        FileName := StrSubstNo('%1-%2-%3.pdf', lblOrder, WhseShipHeader."No.", _txtTreckingNo);
+        SaveAttachment2WhseShmt(RecRef, FileName, TempBlob);
     end;
 
-    local procedure GetLastIncomingDocumentEntryNo(): Integer
+    local procedure SaveAttachment2WhseShmt(RecRef: RecordRef; FileName: Text; TempBlob: Record TempBlob)
     var
-        IncomingDocumentAttachment: Record "Incoming Document Attachment";
-    begin
-        IncomingDocumentAttachment.FindLast();
-        exit(IncomingDocumentAttachment."Incoming Document Entry No." + 1);
-    end;
-
-    local procedure ImportAttachment(var IncomingDocumentAttachment: Record "Incoming Document Attachment"; FileName: Text; _TempBlob: Record TempBlob): Boolean
-    var
-        IncomingDocument: Record "Incoming Document";
-        WhseShipHeader: Record "Warehouse Shipment Header";
+        FieldRef: FieldRef;
+        DocStream: InStream;
+        RecNo: Code[20];
+        DocType: Option Quote,"Order",Invoice,"Credit Memo","Blanket Order","Return Order";
+        LineNo: Integer;
+        DocumentAttachment: Record "Document Attachment";
         FileManagement: Codeunit "File Management";
-        PostingDate: Date;
-        DocNo: Code[20];
+        IncomingFileName: Text;
     begin
-        WITH IncomingDocumentAttachment DO BEGIN
-            DocNo := GetFilter("Document No.");
+        with DocumentAttachment do begin
+            IncomingFileName := FileName;
+            Init();
+            Validate("File Extension", FileManagement.GetExtension(IncomingFileName));
+            Validate("File Name", CopyStr(FileManagement.GetFileNameWithoutExtension(IncomingFileName), 1, MaxStrLen("File Name")));
+            TempBlob.Blob.CreateInStream(DocStream);
+            "Document Reference ID".ImportStream(DocStream, IncomingFileName);
+            Validate("Table ID", RecRef.Number);
+            FieldRef := RecRef.Field(1);
+            RecNo := FieldRef.Value;
+            Validate("No.", RecNo);
+            Insert(true);
+        end;
+    end;
 
-            WhseShipHeader.Get(DocNo);
-            WhseShipHeader.SetRange("No.", DocNo);
-            WhseShipHeader.SetRange("Posting Date", WhseShipHeader."Posting Date");
+    [EventSubscriber(ObjectType::Page, 1174, 'OnBeforeDrillDown', '', true, true)]
+    local procedure BeforeDrillDownSetFilters(DocumentAttachment: Record "Document Attachment"; var RecRef: RecordRef)
+    var
+        FieldRef: FieldRef;
+        RecNo: Code[20];
+        WSHeader: Record "Warehouse Shipment Header";
+    begin
+        with DocumentAttachment do begin
+            RecRef.OPEN(DATABASE::"Warehouse Shipment Header");
+            IF WSHeader.GET("No.") THEN
+                RecRef.GETTABLE(WSHeader);
+        end;
+    end;
 
-            CreateIncomingDocument(IncomingDocumentAttachment, IncomingDocument, PostingDate, DocNo, WhseShipHeader.RecordId);
-            IF IncomingDocument.Status IN [IncomingDocument.Status::"Pending Approval", IncomingDocument.Status::Failed] THEN
-                IncomingDocument.TESTFIELD(Status, IncomingDocument.Status::New);
-            "Incoming Document Entry No." := IncomingDocument."Entry No.";
-            "Line No." := GetIncomingDocumentNextLineNo(IncomingDocument);
-            Content := _TempBlob.Blob;
-
-            VALIDATE("File Extension", LOWERCASE(COPYSTR(FileManagement.GetExtension(FileName), 1, MAXSTRLEN("File Extension"))));
-            IF Name = '' THEN
-                Name := COPYSTR(FileManagement.GetFileNameWithoutExtension(FileName), 1, MAXSTRLEN(Name));
-
-            "Document No." := IncomingDocument."Document No.";
-            "Posting Date" := IncomingDocument."Posting Date";
-            IF IncomingDocument.Description = '' THEN BEGIN
-                IncomingDocument.Description := COPYSTR(Name, 1, MAXSTRLEN(IncomingDocument.Description));
-                IncomingDocument.MODIFY;
+    [EventSubscriber(ObjectType::Page, 1173, 'OnAfterOpenForRecRef', '', true, true)]
+    local procedure AfterOpenForRecRefSetFilters(var DocumentAttachment: Record "Document Attachment"; var RecRef: RecordRef)
+    var
+        FieldRef: FieldRef;
+        RecNo: Code[20];
+    begin
+        with DocumentAttachment do
+            CASE RecRef.NUMBER OF
+                DATABASE::"Warehouse Shipment Header":
+                    BEGIN
+                        SetRange("Table ID", Database::"Warehouse Shipment Header");
+                        FieldRef := RecRef.FIELD(1);
+                        RecNo := FieldRef.VALUE;
+                        SETRANGE("No.", RecNo);
+                    END;
             END;
-
-            INSERT(TRUE);
-
-            // IF Type IN [Type::Image, Type::PDF] THEN
-            //     OnAttachBinaryFile;
-        END;
-        EXIT(TRUE);
     end;
 
-    local procedure CreateIncomingDocument(var IncomingDocumentAttachment: Record "Incoming Document Attachment"; var IncomingDocument: Record "Incoming Document"; PostingDate: Date; DocNo: Code[20]; RelatedRecordID: RecordID)
-    var
-        DataTypeManagement: Codeunit "Data Type Management";
-        RelatedRecordRef: RecordRef;
-        RelatedRecord: Variant;
-    begin
-        IncomingDocument.CreateIncomingDocument('', '');
-        IncomingDocument."Document Type" := IncomingDocument."Document Type"::Journal;
-        if RelatedRecordID.TableNo = 0 then
-            if IncomingDocument.GetRecord(RelatedRecord) then
-                if DataTypeManagement.GetRecordRef(RelatedRecord, RelatedRecordRef) then
-                    RelatedRecordID := RelatedRecordRef.RecordId;
-        IncomingDocument."Related Record ID" := RelatedRecordID;
-        if IncomingDocument."Document Type" <> IncomingDocument."Document Type"::" " then begin
-            if IncomingDocument.Posted then
-                IncomingDocument.Status := IncomingDocument.Status::Posted
-            else
-                IncomingDocument.Status := IncomingDocument.Status::Created;
-            IncomingDocument.Released := true;
-            IncomingDocument."Released Date-Time" := CurrentDateTime;
-            IncomingDocument."Released By User ID" := UserSecurityId;
-            IncomingDocument."Document No." := IncomingDocumentAttachment.GetRangeMin("Document No.");
-            IncomingDocument."Posting Date" := IncomingDocumentAttachment.GetRangeMin("Posting Date");
-        end;
-        IncomingDocument.Modify;
-    end;
+    // local procedure AddLabel2Shipment(_txtLabelBase64: Text; _WhseShipDocNo: Code[20])
+    // var
+    //     TempBlob: Record TempBlob;
+    //     WhseShipHeader: Record "Warehouse Shipment Header";
+    //     lblOrder: TextConst ENU = 'labelWhseShmt', RUS = 'labelWhseShmt';
+    //     IncomingDocumentAttachment: Record "Incoming Document Attachment";
+    //     FileName: Text;
+    // begin
+    //     WhseShipHeader.Get(_WhseShipDocNo);
+    //     TempBlob.FromBase64String(_txtLabelBase64);
+    //     FileName := StrSubstNo('%1-%2-%3.pdf', lblOrder, WhseShipHeader."No.", WhseShipHeader."Posting Date");
+    //     with IncomingDocumentAttachment do begin
+    //         SetRange("Incoming Document Entry No.", GetLastIncomingDocumentEntryNo);
+    //         SetRange("Document No.", WhseShipHeader."No.");
+    //         SetRange("Posting Date", WhseShipHeader."Posting Date");
+    //         Content := TempBlob.Blob;
+    //     end;
+    //     ImportAttachment(IncomingDocumentAttachment, FileName, TempBlob);
+    // end;
 
-    local procedure GetIncomingDocumentNextLineNo(IncomingDocument: Record "Incoming Document"): Integer
-    var
-        IncomingDocumentAttachment: Record "Incoming Document Attachment";
-    begin
-        with IncomingDocumentAttachment do begin
-            SetRange("Incoming Document Entry No.", IncomingDocument."Entry No.");
-            if FindLast then;
-            exit("Line No." + LineIncrement);
-        end;
-    end;
+    // local procedure GetLastIncomingDocumentEntryNo(): Integer
+    // var
+    //     IncomingDocumentAttachment: Record "Incoming Document Attachment";
+    // begin
+    //     IncomingDocumentAttachment.FindLast();
+    //     exit(IncomingDocumentAttachment."Incoming Document Entry No." + 1);
+    // end;
 
-    local procedure LineIncrement(): Integer
-    begin
-        exit(10000);
-    end;
+    // local procedure ImportAttachment(var IncomingDocumentAttachment: Record "Incoming Document Attachment"; FileName: Text; _TempBlob: Record TempBlob): Boolean
+    // var
+    //     IncomingDocument: Record "Incoming Document";
+    //     WhseShipHeader: Record "Warehouse Shipment Header";
+    //     FileManagement: Codeunit "File Management";
+    //     PostingDate: Date;
+    //     DocNo: Code[20];
+    // begin
+    //     WITH IncomingDocumentAttachment DO BEGIN
+    //         DocNo := GetFilter("Document No.");
+
+    //         WhseShipHeader.Get(DocNo);
+    //         WhseShipHeader.SetRange("No.", DocNo);
+    //         WhseShipHeader.SetRange("Posting Date", WhseShipHeader."Posting Date");
+
+    //         CreateIncomingDocument(IncomingDocumentAttachment, IncomingDocument, PostingDate, DocNo, WhseShipHeader.RecordId);
+    //         IF IncomingDocument.Status IN [IncomingDocument.Status::"Pending Approval", IncomingDocument.Status::Failed] THEN
+    //             IncomingDocument.TESTFIELD(Status, IncomingDocument.Status::New);
+    //         "Incoming Document Entry No." := IncomingDocument."Entry No.";
+    //         "Line No." := GetIncomingDocumentNextLineNo(IncomingDocument);
+    //         Content := _TempBlob.Blob;
+
+    //         VALIDATE("File Extension", LOWERCASE(COPYSTR(FileManagement.GetExtension(FileName), 1, MAXSTRLEN("File Extension"))));
+    //         IF Name = '' THEN
+    //             Name := COPYSTR(FileManagement.GetFileNameWithoutExtension(FileName), 1, MAXSTRLEN(Name));
+
+    //         "Document No." := IncomingDocument."Document No.";
+    //         "Posting Date" := IncomingDocument."Posting Date";
+    //         IF IncomingDocument.Description = '' THEN BEGIN
+    //             IncomingDocument.Description := COPYSTR(Name, 1, MAXSTRLEN(IncomingDocument.Description));
+    //             IncomingDocument.MODIFY;
+    //         END;
+
+    //         INSERT(TRUE);
+    //     END;
+    //     EXIT(TRUE);
+    // end;
+
+    // local procedure CreateIncomingDocument(var IncomingDocumentAttachment: Record "Incoming Document Attachment"; var IncomingDocument: Record "Incoming Document"; PostingDate: Date; DocNo: Code[20]; RelatedRecordID: RecordID)
+    // var
+    //     DataTypeManagement: Codeunit "Data Type Management";
+    //     RelatedRecordRef: RecordRef;
+    //     RelatedRecord: Variant;
+    // begin
+    //     IncomingDocument.CreateIncomingDocument('', '');
+    //     IncomingDocument."Document Type" := IncomingDocument."Document Type"::Journal;
+    //     if RelatedRecordID.TableNo = 0 then
+    //         if IncomingDocument.GetRecord(RelatedRecord) then
+    //             if DataTypeManagement.GetRecordRef(RelatedRecord, RelatedRecordRef) then
+    //                 RelatedRecordID := RelatedRecordRef.RecordId;
+    //     IncomingDocument."Related Record ID" := RelatedRecordID;
+    //     if IncomingDocument."Document Type" <> IncomingDocument."Document Type"::" " then begin
+    //         if IncomingDocument.Posted then
+    //             IncomingDocument.Status := IncomingDocument.Status::Posted
+    //         else
+    //             IncomingDocument.Status := IncomingDocument.Status::Created;
+    //         IncomingDocument.Released := true;
+    //         IncomingDocument."Released Date-Time" := CurrentDateTime;
+    //         IncomingDocument."Released By User ID" := UserSecurityId;
+    //         IncomingDocument."Document No." := IncomingDocumentAttachment.GetRangeMin("Document No.");
+    //         IncomingDocument."Posting Date" := IncomingDocumentAttachment.GetRangeMin("Posting Date");
+    //     end;
+    //     IncomingDocument.Modify;
+    // end;
+
+    // local procedure GetIncomingDocumentNextLineNo(IncomingDocument: Record "Incoming Document"): Integer
+    // var
+    //     IncomingDocumentAttachment: Record "Incoming Document Attachment";
+    // begin
+    //     with IncomingDocumentAttachment do begin
+    //         SetRange("Incoming Document Entry No.", IncomingDocument."Entry No.");
+    //         if FindLast then;
+    //         exit("Line No." + LineIncrement);
+    //     end;
+    // end;
+
+    // local procedure LineIncrement(): Integer
+    // begin
+    //     exit(10000);
+    // end;
 
     local procedure CreateListAsFilter(var _List: Text; _subString: Text)
     begin
@@ -463,7 +505,7 @@ codeunit 50001 "ShipStation Mgt."
     var
         JSObjectHeader: JsonObject;
         JSText: Text;
-        jsonObjectNull: JsonObject;
+        jsonNull: JsonObject;
     begin
         JSObjectHeader.Add('orderId', GetJSToken(_JSObject, 'orderId').AsValue().AsInteger());
         JSObjectHeader.Add('carrierCode', GetJSToken(_JSObject, 'carrierCode').AsValue().AsText());
@@ -473,24 +515,13 @@ codeunit 50001 "ShipStation Mgt."
         JSObjectHeader.Add('shipDate', Date2Text4SS(Today));
         JSObjectHeader.Add('weight', GetJSToken(_JSObject, 'weight').AsObject());
 
-        if GetJSToken(_JSObject, 'dimensions').isValue() then
-            JSObjectHeader.Add('dimensions', jsonObjectNull)
-        else
+        if not GetJSToken(_JSObject, 'dimensions').isValue() then
             JSObjectHeader.Add('dimensions', GetJSToken(_JSObject, 'dimensions').AsObject());
-
-        if GetJSToken(_JSObject, 'insuranceOptions').IsValue then
-            JSObjectHeader.Add('insuranceOptions', jsonObjectNull)
-        else
+        if not GetJSToken(_JSObject, 'insuranceOptions').IsValue then
             JSObjectHeader.Add('insuranceOptions', GetJSToken(_JSObject, 'insuranceOptions').AsObject());
-
-        if GetJSToken(_JSObject, 'internationalOptions').IsValue then
-            JSObjectHeader.Add('internationalOptions', jsonObjectNull)
-        else
+        if not GetJSToken(_JSObject, 'internationalOptions').IsValue then
             JSObjectHeader.Add('internationalOptions', GetJSToken(_JSObject, 'internationalOptions').AsObject());
-
-        if GetJSToken(_JSObject, 'advancedOptions').IsValue then
-            JSObjectHeader.Add('advancedOptions', jsonObjectNull)
-        else
+        if not GetJSToken(_JSObject, 'advancedOptions').IsValue then
             JSObjectHeader.Add('advancedOptions', GetJSToken(_JSObject, 'advancedOptions').AsObject());
 
         JSObjectHeader.Add('testLabel', false);

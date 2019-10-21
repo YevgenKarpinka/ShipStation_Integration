@@ -77,7 +77,7 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                 CaptionML = ENU = 'ShipStation', RUS = 'ShipStation';
                 Image = ReleaseShipment;
 
-                action("Get Orders")
+                action("Get Order")
                 {
                     ApplicationArea = All;
                     Image = OrderList;

@@ -11,6 +11,12 @@ pageextension 50004 "Warehouse Shipment Ext." extends "Warehouse Shipment"
                 ShowFilter = false;
                 Visible = true;
             }
+            part("Attached Documents"; "Document Attachment Factbox")
+            {
+                CaptionML = ENU = 'Attachments';
+                ApplicationArea = All;
+                SubPageLink = "Table ID" = CONST(7320), "No." = FIELD("No.");
+            }
         }
     }
 
