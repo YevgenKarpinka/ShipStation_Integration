@@ -27,6 +27,24 @@ tableextension 50003 "Sales Header Ext." extends "Sales Header"
             CaptionML = ENU = 'ShipStation Status', RUS = 'Статус ShipStation';
             Editable = false;
         }
+        field(50004; "ShipStation Shipment Cost"; Decimal)
+        {
+            DataClassification = ToBeClassified;
+            CaptionML = ENU = 'ShipStation Shipment Cost', RUS = 'Сума отгрузки ShipStation';
+            Editable = false;
+        }
+        field(50005; "ShipStation Insurance Cost"; Decimal)
+        {
+            DataClassification = ToBeClassified;
+            CaptionML = ENU = 'ShipStation Insurance Cost', RUS = 'Сума страховки ShipStation';
+            Editable = false;
+        }
+        field(50006; "ShipStation Tracking No."; Text[30])
+        {
+            DataClassification = ToBeClassified;
+            CaptionML = ENU = 'ShipStation Tracking No.', RUS = 'Трек номер ShipStation';
+            Editable = false;
+        }
     }
 
     keys
@@ -37,6 +55,23 @@ tableextension 50003 "Sales Header Ext." extends "Sales Header"
         }
     }
 
+    procedure GetShippingAgentName(ShippingAgentCode: Code[10]): Text[50]
     var
-        myInt: Integer;
+        _SA: Record "Shipping Agent";
+    begin
+        if _SA.Get(ShippingAgentCode) then
+            exit(_SA.Name)
+        else
+            exit('')
+    end;
+
+    procedure GetShippingAgentServiceDescription(ShippingAgentCode: Code[10]; ShippingAgentServiceCode: Code[10]): Text[100]
+    var
+        _SAS: Record "Shipping Agent Services";
+    begin
+        if _SAS.Get(ShippingAgentCode, ShippingAgentServiceCode) then
+            exit(_SAS.Description)
+        else
+            exit('')
+    end;
 }

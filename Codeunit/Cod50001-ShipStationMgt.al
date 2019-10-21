@@ -164,7 +164,7 @@ codeunit 50001 "ShipStation Mgt."
         _Cust: Record Customer;
         JSText: Text;
         JSObjectHeader: JsonObject;
-        OrdersJSArray: JsonArray;
+        jsonTagsArray: JsonArray;
         txtAwaitingShipment: Label 'awaiting_shipment';
         txtTest: Label '{"orderNumber":"TEST-ORDER-001","orderKey":"0f6bec18-3e89-4881-83aa-f392d84f4c74","orderDate":"2015-06-29T08:46:27.0000000","paymentDate":"2015-06-29T08:46:27.0000000","shipByDate":"2015-07-05T00:00:00.0000000","orderStatus":"awaiting_shipment","customerId":37701499,"customerUsername":"headhoncho@whitehouse.gov","customerEmail":"headhoncho@whitehouse.gov","billTo":{"name":"ThePresident","company":{},"street1":{},"street2":{},"street3":{},"city":{},"state":{},"postalCode":{},"country":{},"phone":{},"residential":{}},"shipTo":{"name":"ThePresident","company":"USGovt","street1":"1600PennsylvaniaAve","street2":"OvalOffice","street3":{},"city":"Washington","state":"DC","postalCode":"20500","country":"US","phone":"555-555-5555","residential":true},"items":[{"lineItemKey":"vd08-MSLbtx","sku":"ABC123","name":"Testitem#1","imageUrl":{},"weight":{"value":24,"units":"ounces"},"quantity":2,"unitPrice":99.99,"taxAmount":2.5,"shippingAmount":5,"warehouseLocation":"Aisle1,Bin7","options":[{"name":"Size","value":"Large"}],"productId":123456,"fulfillmentSku":{},"adjustment":false,"upc":"32-65-98"},{"lineItemKey":{},"sku":"DISCOUNTCODE","name":"10%OFF","imageUrl":{},"weight":{"value":0,"units":"ounces"},"quantity":1,"unitPrice":-20.55,"taxAmount":{},"shippingAmount":{},"warehouseLocation":{},"options":[],"productId":123456,"fulfillmentSku":"SKU-Discount","adjustment":true,"upc":{}}],"amountPaid":218.73,"taxAmount":5,"shippingAmount":10,"customerNotes":"Pleaseshipassoonaspossible!","internalNotes":"Customercalledandwouldliketoupgradeshipping","gift":true,"giftMessage":"Thankyou!","paymentMethod":"CreditCard","requestedShippingService":"PriorityMail","carrierCode":"fedex","serviceCode":"fedex_2day","packageCode":"package","confirmation":"delivery","shipDate":"2015-07-02","weight":{"value":25,"units":"ounces"},"dimensions":{"units":"inches","length":7,"width":5,"height":6},"insuranceOptions":{"provider":"carrier","insureShipment":true,"insuredValue":200},"internationalOptions":{"contents":{},"customsItems":{}},"advancedOptions":{"warehouseId":98765,"nonMachinable":false,"saturdayDelivery":false,"containsAlcohol":false,"mergedOrSplit":false,"mergedIds":[],"parentId":{},"storeId":12345,"customField1":"Customdatathatyoucanaddtoanorder.SeeCustomField#2&#3formoreinfo!","customField2":"PerUIsettings,thisinformationcanappearonsomecarriersshippinglabels.Seelinkbelow","customField3":"https://help.shipstation.com/hc/en-us/articles/206639957","source":"Webstore","billToParty":{},"billToAccount":{},"billToPostalCode":{},"billToCountryCode":{}},"tagIds":[53974]}';
     begin
@@ -177,7 +177,7 @@ codeunit 50001 "ShipStation Mgt."
         JSObjectHeader.Add('paymentDate', Date2Text4JSON(_SH."Prepayment Due Date"));
         JSObjectHeader.Add('shipByDate', Date2Text4JSON(_SH."Shipment Date"));
         JSObjectHeader.Add('orderStatus', txtAwaitingShipment);
-        JSObjectHeader.Add('customerId', _Cust."No.");
+        // JSObjectHeader.Add('customerId', _Cust."No.");
         JSObjectHeader.Add('customerUsername', _Cust."E-Mail");
         JSObjectHeader.Add('customerEmail', _Cust."E-Mail");
         JSObjectHeader.Add('billTo', jsonBillToFromSH(_SH."No."));
@@ -185,8 +185,10 @@ codeunit 50001 "ShipStation Mgt."
         JSObjectHeader.Add('items', jsonItemsFromSL(_SH."No."));
         // uncomment when dimensions will be solution
         // JSObjectHeader.Add('dimensions', jsonDimentionsFromAttributeValue(_SH."No."));
-        Clear(OrdersJSArray);
-        JSObjectHeader.Add('tagIds', OrdersJSArray);
+        JSObjectHeader.Add('carrierCode', GetCarrierCodeByAgentCode(_SH."Shipping Agent Code"));
+        JSObjectHeader.Add('serviceCode', GetServiceCodeByAgentServiceCode(_SH."Shipping Agent Code", _SH."Shipping Agent Service Code"));
+        Clear(jsonTagsArray);
+        JSObjectHeader.Add('tagIds', jsonTagsArray);
         JSObjectHeader.WriteTo(JSText);
 
         if testMode then begin
@@ -200,6 +202,29 @@ codeunit 50001 "ShipStation Mgt."
         JSObjectHeader.ReadFrom(JSText);
         UpdateSalesHeaderFromShipStation(DocNo, JSObjectHeader);
 
+    end;
+
+    local procedure GetCarrierCodeByAgentCode(ShippingAgentCode: Code[10]): Text[50]
+    var
+        _SA: Record "Shipping Agent";
+        _jsonNull: JsonObject;
+    begin
+        if _SA.Get(ShippingAgentCode) then
+            exit(_SA."SS Code")
+        else
+            exit('');
+    end;
+
+    local procedure GetServiceCodeByAgentServiceCode(ShippingAgentCode: Code[10]; ShippingAgentServiceCode: Code[10]): Text[50]
+    var
+        _SAS: Record "Shipping Agent Services";
+        _jsonNull: JsonObject;
+    begin
+        if _SAS.Get(ShippingAgentCode, ShippingAgentServiceCode) then
+            exit(_SAS."SS Code")
+        else
+            // exit(_jsonNull.AsToken().AsValue().AsText());
+            exit('');
     end;
 
     procedure UpdateSalesHeaderFromShipStation(DocNo: Code[20]; _jsonObject: JsonObject): Boolean
@@ -252,7 +277,7 @@ codeunit 50001 "ShipStation Mgt."
         // Get Order from Shipstation to Fill Variables
         JSText := Connect2ShipStation(1, '', StrSubstNo('/%1', _SH."ShipStation Order ID"));
 
-        Message(JSText);
+        // Message(JSText);
 
         JSObject.ReadFrom(JSText);
 
@@ -271,14 +296,34 @@ codeunit 50001 "ShipStation Mgt."
         // Create Label to Order
         JSText := Connect2ShipStation(3, FillValuesFromOrder(JSObject), '');
         // if JSText <> '' then begin
-        FindWarehouseSipment(DocNo, WhseShipDocNo);
+
+        // Update Order From Label
+        UpdateOrderFromLabel(DocNo, JSText);
+
+        // FindWarehouseSipment(DocNo, WhseShipDocNo); // comment to test Create Label and Attache to Warehouse Shipment
+
+        WhseShipDocNo := '111'; // code to test attache
+
         // Add Lable to Shipment
         jsLabelObject.ReadFrom(JSText);
         txtLabel := GetJSToken(jsLabelObject, 'labelData').AsValue().AsText();
         AddLabel2Shipment(txtLabel, WhseShipDocNo);
         // end;
         // end;
-        Message('Label Created and Attached to Shipment!');
+        Message('Label Created and Attached to Shipment! %1', WhseShipDocNo);
+    end;
+
+    local procedure UpdateOrderFromLabel(DocNo: Code[20]; jsonText: Text);
+    var
+        _SH: Record "Sales Header";
+        jsLabelObject: JsonObject;
+    begin
+        _SH.Get(_SH."Document Type"::Order, DocNo);
+        jsLabelObject.ReadFrom(jsonText);
+        _SH."ShipStation Insurance Cost" := GetJSToken(jsLabelObject, 'insuranceCost').AsValue().AsDecimal();
+        _SH."ShipStation Shipment Cost" := GetJSToken(jsLabelObject, 'shipmentCost').AsValue().AsDecimal();
+        _SH."ShipStation Tracking No." := GetJSToken(jsLabelObject, 'trackingNumber').AsValue().AsText();
+        _SH.Modify();
     end;
 
     local procedure FindWarehouseSipment(_DocNo: Code[20]; var _WhseShipDcoNo: Code[20])
@@ -418,6 +463,7 @@ codeunit 50001 "ShipStation Mgt."
     var
         JSObjectHeader: JsonObject;
         JSText: Text;
+        jsonObjectNull: JsonObject;
     begin
         JSObjectHeader.Add('orderId', GetJSToken(_JSObject, 'orderId').AsValue().AsInteger());
         JSObjectHeader.Add('carrierCode', GetJSToken(_JSObject, 'carrierCode').AsValue().AsText());
@@ -426,17 +472,30 @@ codeunit 50001 "ShipStation Mgt."
         JSObjectHeader.Add('confirmation', GetJSToken(_JSObject, 'confirmation').AsValue().AsText());
         JSObjectHeader.Add('shipDate', Date2Text4SS(Today));
         JSObjectHeader.Add('weight', GetJSToken(_JSObject, 'weight').AsObject());
-        if not GetJSToken(_JSObject, 'dimensions').isValue() then
+
+        if GetJSToken(_JSObject, 'dimensions').isValue() then
+            JSObjectHeader.Add('dimensions', jsonObjectNull)
+        else
             JSObjectHeader.Add('dimensions', GetJSToken(_JSObject, 'dimensions').AsObject());
-        if not GetJSToken(_JSObject, 'insuranceOptions').IsValue then
+
+        if GetJSToken(_JSObject, 'insuranceOptions').IsValue then
+            JSObjectHeader.Add('insuranceOptions', jsonObjectNull)
+        else
             JSObjectHeader.Add('insuranceOptions', GetJSToken(_JSObject, 'insuranceOptions').AsObject());
-        if not GetJSToken(_JSObject, 'internationalOptions').IsValue then
+
+        if GetJSToken(_JSObject, 'internationalOptions').IsValue then
+            JSObjectHeader.Add('internationalOptions', jsonObjectNull)
+        else
             JSObjectHeader.Add('internationalOptions', GetJSToken(_JSObject, 'internationalOptions').AsObject());
-        if not GetJSToken(_JSObject, 'advancedOptions').IsValue then
+
+        if GetJSToken(_JSObject, 'advancedOptions').IsValue then
+            JSObjectHeader.Add('advancedOptions', jsonObjectNull)
+        else
             JSObjectHeader.Add('advancedOptions', GetJSToken(_JSObject, 'advancedOptions').AsObject());
-        JSObjectHeader.Add('testLabel', true); // only for testing
+
+        JSObjectHeader.Add('testLabel', false);
         JSObjectHeader.WriteTo(JSText);
-        Message(JSText);
+        // Message(JSText);
         exit(JSText);
     end;
 

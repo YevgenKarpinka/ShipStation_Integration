@@ -4,7 +4,24 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
     {
         // Add changes to page layout here
 
-
+        addafter("Shipping Agent Code")
+        {
+            field("Shipping Agent Name"; GetShippingAgentName("Shipping Agent Code"))
+            {
+                ApplicationArea = All;
+                Style = Strong;
+                ShowCaption = false;
+            }
+        }
+        addafter("Shipping Agent Service Code")
+        {
+            field("Shipping Agent Service Description"; GetShippingAgentServiceDescription("Shipping Agent Code", "Shipping Agent Service Code"))
+            {
+                ApplicationArea = All;
+                Style = Strong;
+                ShowCaption = false;
+            }
+        }
         addafter(Control1900201301)
         {
             group(groupShipStation)
@@ -27,6 +44,21 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
 
                 }
                 field("ShipStation Status"; "ShipStation Status")
+                {
+                    ApplicationArea = All;
+
+                }
+                field("ShipStation Shipment Cost"; "ShipStation Shipment Cost")
+                {
+                    ApplicationArea = All;
+
+                }
+                field("ShipStation Insurance Cost"; "ShipStation Insurance Cost")
+                {
+                    ApplicationArea = All;
+
+                }
+                field("ShipStation Tracking No."; "ShipStation Tracking No.")
                 {
                     ApplicationArea = All;
 
