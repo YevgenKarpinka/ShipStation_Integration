@@ -20,6 +20,11 @@ pageextension 50003 "Sales Order List Ext." extends "Sales Order List"
                 ApplicationArea = All;
 
             }
+            field("ShipStation Shipment Amount"; "ShipStation Shipment Amount")
+            {
+                ApplicationArea = All;
+
+            }
             field("ShipStation Shipment Cost"; "ShipStation Shipment Cost")
             {
                 ApplicationArea = All;
@@ -48,19 +53,19 @@ pageextension 50003 "Sales Order List Ext." extends "Sales Order List"
                 CaptionML = ENU = 'ShipStation', RUS = 'ShipStation';
                 Image = ReleaseShipment;
 
-                action("Get Orders")
-                {
-                    ApplicationArea = All;
-                    Image = OrderList;
+                // action("Get Orders")
+                // {
+                //     ApplicationArea = All;
+                //     Image = OrderList;
 
-                    trigger OnAction()
-                    var
-                        ShipStationMgt: Codeunit "ShipStation Mgt.";
-                    begin
-                        ShipStationMgt.GetOrdersFromShipStation();
-                    end;
-                }
-                action("Create Orders")
+                //     trigger OnAction()
+                //     var
+                //         ShipStationMgt: Codeunit "ShipStation Mgt.";
+                //     begin
+                //         ShipStationMgt.GetOrdersFromShipStation();
+                //     end;
+                // }
+                action("Create/Update Order")
                 {
                     ApplicationArea = All;
                     Image = CreateDocuments;
@@ -85,7 +90,7 @@ pageextension 50003 "Sales Order List Ext." extends "Sales Order List"
                         Message('%1 \%2', lblOrdersList, txtOrdersList);
                     end;
                 }
-                action("Create Label to Orders")
+                action("Create Label to Order")
                 {
                     ApplicationArea = All;
                     Image = PrintReport;

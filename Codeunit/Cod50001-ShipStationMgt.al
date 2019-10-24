@@ -166,22 +166,26 @@ codeunit 50001 "ShipStation Mgt."
 
         _Cust.Get(_SH."Sell-to Customer No.");
         JSObjectHeader.Add('orderNumber', _SH."No.");
-        JSObjectHeader.Add('orderKey', _SH."ShipStation Order Key");
+        if _SH."ShipStation Order Key" <> '' then
+            JSObjectHeader.Add('orderKey', _SH."ShipStation Order Key");
         JSObjectHeader.Add('orderDate', Date2Text4JSON(_SH."Posting Date"));
         JSObjectHeader.Add('paymentDate', Date2Text4JSON(_SH."Prepayment Due Date"));
         JSObjectHeader.Add('shipByDate', Date2Text4JSON(_SH."Shipment Date"));
         JSObjectHeader.Add('orderStatus', txtAwaitingShipment);
-        // JSObjectHeader.Add('customerId', _Cust."No.");
         JSObjectHeader.Add('customerUsername', _Cust."E-Mail");
         JSObjectHeader.Add('customerEmail', _Cust."E-Mail");
         JSObjectHeader.Add('billTo', jsonBillToFromSH(_SH."No."));
         JSObjectHeader.Add('shipTo', jsonShipToFromSH(_SH."No."));
         JSObjectHeader.Add('items', jsonItemsFromSL(_SH."No."));
+
         // uncomment when dimensions will be solution
         // JSObjectHeader.Add('dimensions', jsonDimentionsFromAttributeValue(_SH."No."));
-        JSObjectHeader.Add('carrierCode', GetCarrierCodeByAgentCode(_SH."Shipping Agent Code"));
-        JSObjectHeader.Add('serviceCode', GetServiceCodeByAgentServiceCode(_SH."Shipping Agent Code", _SH."Shipping Agent Service Code"));
-        Clear(jsonTagsArray);
+
+        // Carrier and Service are read only
+        // JSObjectHeader.Add('carrierCode', GetCarrierCodeByAgentCode(_SH."Shipping Agent Code"));
+        // JSObjectHeader.Add('serviceCode', GetServiceCodeByAgentServiceCode(_SH."Shipping Agent Code", _SH."Shipping Agent Service Code"));
+
+        // Clear(jsonTagsArray);
         JSObjectHeader.Add('tagIds', jsonTagsArray);
         JSObjectHeader.WriteTo(JSText);
 
@@ -226,19 +230,28 @@ codeunit 50001 "ShipStation Mgt."
         // update Sales Header from ShipStation
 
         _jsonToken := GetJSToken(_jsonObject, 'carrierCode');
-        if not _jsonToken.AsValue().IsNull then
+        if not _jsonToken.AsValue().IsNull then begin
             txtCarrierCode := CopyStr(GetJSToken(_jsonObject, 'carrierCode').AsValue().AsText(), 1, MaxStrLen(txtCarrierCode));
+            _SH."Shipping Agent Code" := GetShippingAgent(txtCarrierCode);
 
-        _jsonToken := GetJSToken(_jsonObject, 'serviceCode');
-        if not _jsonToken.AsValue().IsNull then
-            txtServiceCode := CopyStr(GetJSToken(_jsonObject, 'serviceCode').AsValue().AsText(), 1, MaxStrLen(txtServiceCode));
+            _jsonToken := GetJSToken(_jsonObject, 'serviceCode');
+            if not _jsonToken.AsValue().IsNull then begin
+                txtServiceCode := CopyStr(GetJSToken(_jsonObject, 'serviceCode').AsValue().AsText(), 1, MaxStrLen(txtServiceCode));
+                _SH."Shipping Agent Service Code" := GetShippingAgentService(txtServiceCode, txtCarrierCode);
+            end;
+        end;
 
-        _SH."ShipStation Order ID" := GetJSToken(_jsonObject, 'orderId').AsValue().AsInteger();
+        _SH."ShipStation Order ID" := GetJSToken(_jsonObject, 'orderId').AsValue().AsText();
         _SH."ShipStation Order Key" := GetJSToken(_jsonObject, 'orderKey').AsValue().AsText();
-        _SH."Shipping Agent Code" := GetShippingAgent(txtCarrierCode);
-        _SH."Shipping Agent Service Code" := GetShippingAgentService(txtServiceCode, txtCarrierCode);
         _SH."ShipStation Status" := CopyStr(GetJSToken(_jsonObject, 'orderStatus').AsValue().AsText(), 1, MaxStrLen(_SH."ShipStation Status"));
-        _SH."ShipStation Order Status" := _SH."ShipStation Order Status"::Sent;
+        case _SH."ShipStation Order Status" of
+            _SH."ShipStation Order Status"::"Not Sent":
+                _SH."ShipStation Order Status" := _SH."ShipStation Order Status"::Sent;
+            _SH."ShipStation Order Status"::Sent:
+                _SH."ShipStation Order Status" := _SH."ShipStation Order Status"::Updated;
+        end;
+        _SH."ShipStation Shipment Amount" := GetJSToken(_jsonObject, 'shippingAmount').AsValue().AsDecimal();
+
         _SH.Modify();
     end;
 
@@ -255,10 +268,10 @@ codeunit 50001 "ShipStation Mgt."
         OrdersListCreateLabel: Text;
         OrdersCancelled: Text;
         txtLabel: Text;
-        txtTreckingNo: Text;
+        txtBeforeName: Text;
         WhseShipDocNo: Code[20];
     begin
-        if (DocNo = '') or (not _SH.Get(_SH."Document Type"::Order, DocNo)) or (_SH."ShipStation Order ID" = 0) then exit(false);
+        if (DocNo = '') or (not _SH.Get(_SH."Document Type"::Order, DocNo)) or (_SH."ShipStation Order ID" = '') then exit(false);
 
         // Get Order from Shipstation to Fill Variables
         JSText := Connect2ShipStation(1, '', StrSubstNo('/%1', _SH."ShipStation Order ID"));
@@ -275,10 +288,9 @@ codeunit 50001 "ShipStation Mgt."
         // Add Lable to Shipment
         jsLabelObject.ReadFrom(JSText);
         txtLabel := GetJSToken(jsLabelObject, 'labelData').AsValue().AsText();
-        txtTreckingNo := GetJSToken(jsLabelObject, 'trackingNumber').AsValue().AsText();
-        // AddLabel2Shipment(txtLabel, WhseShipDocNo);
+        txtBeforeName := _SH."No." + '-' + GetJSToken(jsLabelObject, 'trackingNumber').AsValue().AsText();
 
-        SaveLabel2Shipment(txtTreckingNo, txtLabel, WhseShipDocNo);
+        SaveLabel2Shipment(txtBeforeName, txtLabel, WhseShipDocNo);
 
         Message('Label Created and Attached to Warehouse Shipment %1', WhseShipDocNo);
     end;
@@ -309,12 +321,12 @@ codeunit 50001 "ShipStation Mgt."
         end;
     end;
 
-    local procedure SaveLabel2Shipment(_txtTreckingNo: Text; _txtLabelBase64: Text; _WhseShipDocNo: Code[20])
+    local procedure SaveLabel2Shipment(_txtBefore: Text; _txtLabelBase64: Text; _WhseShipDocNo: Code[20])
     var
         TempBlob: Record TempBlob;
         RecRef: RecordRef;
         WhseShipHeader: Record "Warehouse Shipment Header";
-        lblOrder: TextConst ENU = 'labelWhseShmt', RUS = 'labelWhseShmt';
+        lblOrder: TextConst ENU = 'SalesOrder', RUS = 'SalesOrder';
         DocumentAttachment: Record "Document Attachment";
         FileName: Text;
     begin
@@ -322,7 +334,7 @@ codeunit 50001 "ShipStation Mgt."
         WhseShipHeader.Get(_WhseShipDocNo);
         RecRef.GETTABLE(WhseShipHeader);
         TempBlob.FromBase64String(_txtLabelBase64);
-        FileName := StrSubstNo('%1-%2-%3.pdf', lblOrder, WhseShipHeader."No.", _txtTreckingNo);
+        FileName := StrSubstNo('%1-%2.pdf', _txtBefore, lblOrder);
         SaveAttachment2WhseShmt(RecRef, FileName, TempBlob);
     end;
 
@@ -383,115 +395,6 @@ codeunit 50001 "ShipStation Mgt."
                     END;
             END;
     end;
-
-    // local procedure AddLabel2Shipment(_txtLabelBase64: Text; _WhseShipDocNo: Code[20])
-    // var
-    //     TempBlob: Record TempBlob;
-    //     WhseShipHeader: Record "Warehouse Shipment Header";
-    //     lblOrder: TextConst ENU = 'labelWhseShmt', RUS = 'labelWhseShmt';
-    //     IncomingDocumentAttachment: Record "Incoming Document Attachment";
-    //     FileName: Text;
-    // begin
-    //     WhseShipHeader.Get(_WhseShipDocNo);
-    //     TempBlob.FromBase64String(_txtLabelBase64);
-    //     FileName := StrSubstNo('%1-%2-%3.pdf', lblOrder, WhseShipHeader."No.", WhseShipHeader."Posting Date");
-    //     with IncomingDocumentAttachment do begin
-    //         SetRange("Incoming Document Entry No.", GetLastIncomingDocumentEntryNo);
-    //         SetRange("Document No.", WhseShipHeader."No.");
-    //         SetRange("Posting Date", WhseShipHeader."Posting Date");
-    //         Content := TempBlob.Blob;
-    //     end;
-    //     ImportAttachment(IncomingDocumentAttachment, FileName, TempBlob);
-    // end;
-
-    // local procedure GetLastIncomingDocumentEntryNo(): Integer
-    // var
-    //     IncomingDocumentAttachment: Record "Incoming Document Attachment";
-    // begin
-    //     IncomingDocumentAttachment.FindLast();
-    //     exit(IncomingDocumentAttachment."Incoming Document Entry No." + 1);
-    // end;
-
-    // local procedure ImportAttachment(var IncomingDocumentAttachment: Record "Incoming Document Attachment"; FileName: Text; _TempBlob: Record TempBlob): Boolean
-    // var
-    //     IncomingDocument: Record "Incoming Document";
-    //     WhseShipHeader: Record "Warehouse Shipment Header";
-    //     FileManagement: Codeunit "File Management";
-    //     PostingDate: Date;
-    //     DocNo: Code[20];
-    // begin
-    //     WITH IncomingDocumentAttachment DO BEGIN
-    //         DocNo := GetFilter("Document No.");
-
-    //         WhseShipHeader.Get(DocNo);
-    //         WhseShipHeader.SetRange("No.", DocNo);
-    //         WhseShipHeader.SetRange("Posting Date", WhseShipHeader."Posting Date");
-
-    //         CreateIncomingDocument(IncomingDocumentAttachment, IncomingDocument, PostingDate, DocNo, WhseShipHeader.RecordId);
-    //         IF IncomingDocument.Status IN [IncomingDocument.Status::"Pending Approval", IncomingDocument.Status::Failed] THEN
-    //             IncomingDocument.TESTFIELD(Status, IncomingDocument.Status::New);
-    //         "Incoming Document Entry No." := IncomingDocument."Entry No.";
-    //         "Line No." := GetIncomingDocumentNextLineNo(IncomingDocument);
-    //         Content := _TempBlob.Blob;
-
-    //         VALIDATE("File Extension", LOWERCASE(COPYSTR(FileManagement.GetExtension(FileName), 1, MAXSTRLEN("File Extension"))));
-    //         IF Name = '' THEN
-    //             Name := COPYSTR(FileManagement.GetFileNameWithoutExtension(FileName), 1, MAXSTRLEN(Name));
-
-    //         "Document No." := IncomingDocument."Document No.";
-    //         "Posting Date" := IncomingDocument."Posting Date";
-    //         IF IncomingDocument.Description = '' THEN BEGIN
-    //             IncomingDocument.Description := COPYSTR(Name, 1, MAXSTRLEN(IncomingDocument.Description));
-    //             IncomingDocument.MODIFY;
-    //         END;
-
-    //         INSERT(TRUE);
-    //     END;
-    //     EXIT(TRUE);
-    // end;
-
-    // local procedure CreateIncomingDocument(var IncomingDocumentAttachment: Record "Incoming Document Attachment"; var IncomingDocument: Record "Incoming Document"; PostingDate: Date; DocNo: Code[20]; RelatedRecordID: RecordID)
-    // var
-    //     DataTypeManagement: Codeunit "Data Type Management";
-    //     RelatedRecordRef: RecordRef;
-    //     RelatedRecord: Variant;
-    // begin
-    //     IncomingDocument.CreateIncomingDocument('', '');
-    //     IncomingDocument."Document Type" := IncomingDocument."Document Type"::Journal;
-    //     if RelatedRecordID.TableNo = 0 then
-    //         if IncomingDocument.GetRecord(RelatedRecord) then
-    //             if DataTypeManagement.GetRecordRef(RelatedRecord, RelatedRecordRef) then
-    //                 RelatedRecordID := RelatedRecordRef.RecordId;
-    //     IncomingDocument."Related Record ID" := RelatedRecordID;
-    //     if IncomingDocument."Document Type" <> IncomingDocument."Document Type"::" " then begin
-    //         if IncomingDocument.Posted then
-    //             IncomingDocument.Status := IncomingDocument.Status::Posted
-    //         else
-    //             IncomingDocument.Status := IncomingDocument.Status::Created;
-    //         IncomingDocument.Released := true;
-    //         IncomingDocument."Released Date-Time" := CurrentDateTime;
-    //         IncomingDocument."Released By User ID" := UserSecurityId;
-    //         IncomingDocument."Document No." := IncomingDocumentAttachment.GetRangeMin("Document No.");
-    //         IncomingDocument."Posting Date" := IncomingDocumentAttachment.GetRangeMin("Posting Date");
-    //     end;
-    //     IncomingDocument.Modify;
-    // end;
-
-    // local procedure GetIncomingDocumentNextLineNo(IncomingDocument: Record "Incoming Document"): Integer
-    // var
-    //     IncomingDocumentAttachment: Record "Incoming Document Attachment";
-    // begin
-    //     with IncomingDocumentAttachment do begin
-    //         SetRange("Incoming Document Entry No.", IncomingDocument."Entry No.");
-    //         if FindLast then;
-    //         exit("Line No." + LineIncrement);
-    //     end;
-    // end;
-
-    // local procedure LineIncrement(): Integer
-    // begin
-    //     exit(10000);
-    // end;
 
     local procedure CreateListAsFilter(var _List: Text; _subString: Text)
     begin
@@ -599,7 +502,7 @@ codeunit 50001 "ShipStation Mgt."
                 JSObjectLine.Add('sku', _SL."No.");
                 JSObjectLine.Add('name', _SL.Description);
                 // JSObjectLine.Add('imageUrl', _ID."Main Image URL");
-                JSObjectLine.Add('weight', jsonWeightFromItem(_SL."No."));
+                JSObjectLine.Add('weight', jsonWeightFromItem(_SL."Gross Weight"));
                 JSObjectLine.Add('quantity', Decimal2Integer(_SL.Quantity));
                 JSObjectLine.Add('unitPrice', Round(_SL."Amount Including VAT" / _SL.Quantity, 0.01));
                 JSObjectLine.Add('taxAmount', Round((_SL."Amount Including VAT" - _SL.Amount) / _SL.Quantity, 0.01));
@@ -618,15 +521,12 @@ codeunit 50001 "ShipStation Mgt."
         exit(Round(_Decimal, 1));
     end;
 
-    procedure jsonWeightFromItem(ItemNo: Code[20]): JsonObject
+    procedure jsonWeightFromItem(_GrossWeight: Decimal): JsonObject
     var
         JSObjectLine: JsonObject;
-        txtWeight: Text;
-        _Item: Record Item;
     begin
-        _Item.Get(ItemNo);
-        JSObjectLine.Add('value', _Item."Gross Weight");
-        JSObjectLine.Add('units', 'ounces');
+        JSObjectLine.Add('value', _GrossWeight + 1000);
+        JSObjectLine.Add('units', 'grams');
         exit(JSObjectLine);
     end;
 

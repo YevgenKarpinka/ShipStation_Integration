@@ -1,4 +1,4 @@
-tableextension 50003 "Sales Header Ext." extends "Sales Header"
+tableextension 50006 "Sales Invoice Header Ext." extends "Sales Invoice Header"
 {
     fields
     {
@@ -8,7 +8,7 @@ tableextension 50003 "Sales Header Ext." extends "Sales Header"
             CaptionML = ENU = 'ShipStation Order ID', RUS = 'Идентификатор Заказа ShipStation ';
             Editable = false;
         }
-        field(50001; "ShipStation Order Key"; Text[50])
+        field(50001; "ShipStation Order Key"; Guid)
         {
             CaptionML = ENU = 'ShipStation Order Key', RUS = 'Ключ Заказа ShipStation';
             Editable = false;
@@ -16,8 +16,8 @@ tableextension 50003 "Sales Header Ext." extends "Sales Header"
         field(50002; "ShipStation Order Status"; Option)
         {
             DataClassification = ToBeClassified;
-            OptionMembers = "Not Sent",Sent,Updated;
-            OptionCaptionML = ENU = 'Not Sent,Sent,Updated', RUS = 'Не отправлен,Отправлен,Обновлен';
+            OptionMembers = "Not Sent",Sent,Received;
+            OptionCaptionML = ENU = 'Not Sent,Sent,Received', RUS = 'Не отправлен,Отправлен,Получен';
             CaptionML = ENU = 'ShipStation Order Status', RUS = 'Статус Заказа ShipStation';
             Editable = false;
         }
@@ -30,13 +30,13 @@ tableextension 50003 "Sales Header Ext." extends "Sales Header"
         field(50004; "ShipStation Shipment Cost"; Decimal)
         {
             DataClassification = ToBeClassified;
-            CaptionML = ENU = 'ShipStation Shipment Cost', RUS = 'Стоимость отгрузки ShipStation';
+            CaptionML = ENU = 'ShipStation Shipment Cost', RUS = 'Сума отгрузки ShipStation';
             Editable = false;
         }
         field(50005; "ShipStation Insurance Cost"; Decimal)
         {
             DataClassification = ToBeClassified;
-            CaptionML = ENU = 'ShipStation Insurance Cost', RUS = 'Стоимость страховки ShipStation';
+            CaptionML = ENU = 'ShipStation Insurance Cost', RUS = 'Сума страховки ShipStation';
             Editable = false;
         }
         field(50006; "ShipStation Tracking No."; Text[30])

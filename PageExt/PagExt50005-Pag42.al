@@ -48,6 +48,11 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                     ApplicationArea = All;
 
                 }
+                field("ShipStation Shipment Amount"; "ShipStation Shipment Amount")
+                {
+                    ApplicationArea = All;
+
+                }
                 field("ShipStation Shipment Cost"; "ShipStation Shipment Cost")
                 {
                     ApplicationArea = All;
@@ -77,19 +82,19 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                 CaptionML = ENU = 'ShipStation', RUS = 'ShipStation';
                 Image = ReleaseShipment;
 
-                action("Get Order")
-                {
-                    ApplicationArea = All;
-                    Image = OrderList;
+                // action("Get Order")
+                // {
+                //     ApplicationArea = All;
+                //     Image = OrderList;
 
-                    trigger OnAction()
-                    var
-                        ShipStationMgt: Codeunit "ShipStation Mgt.";
-                    begin
-                        ShipStationMgt.GetOrdersFromShipStation();
-                    end;
-                }
-                action("Create Orders")
+                //     trigger OnAction()
+                //     var
+                //         ShipStationMgt: Codeunit "ShipStation Mgt.";
+                //     begin
+                //         ShipStationMgt.GetOrdersFromShipStation();
+                //     end;
+                // }
+                action("Create/Update Order")
                 {
                     ApplicationArea = All;
                     Image = CreateDocuments;
@@ -114,7 +119,7 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                         Message('%1 \%2', lblOrdersList, txtOrdersList);
                     end;
                 }
-                action("Create Label to Orders")
+                action("Create Label to Order")
                 {
                     ApplicationArea = All;
                     Image = PrintReport;
@@ -136,7 +141,4 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
         }
 
     }
-
-    var
-        myInt: Integer;
 }

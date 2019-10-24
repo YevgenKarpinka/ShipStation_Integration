@@ -5,12 +5,12 @@ pageextension 50004 "Warehouse Shipment Ext." extends "Warehouse Shipment"
         // Add changes to page layout here
         addfirst(FactBoxes)
         {
-            part(IncomingDocAttachFactBox; "Incoming Doc. Attach. FactBox")
-            {
-                ApplicationArea = Basic, Suite;
-                ShowFilter = false;
-                Visible = true;
-            }
+            // part(IncomingDocAttachFactBox; "Incoming Doc. Attach. FactBox")
+            // {
+            //     ApplicationArea = Basic, Suite;
+            //     ShowFilter = false;
+            //     Visible = true;
+            // }
             part("Attached Documents"; "Document Attachment Factbox")
             {
                 CaptionML = ENU = 'Attachments';
@@ -27,7 +27,7 @@ pageextension 50004 "Warehouse Shipment Ext." extends "Warehouse Shipment"
 
     trigger OnAfterGetCurrRecord()
     begin
-        CurrPage.IncomingDocAttachFactBox.PAGE.LoadDataFromRecord(Rec);
+        // CurrPage.IncomingDocAttachFactBox.PAGE.LoadDataFromRecord(Rec);
     end;
 
     var
