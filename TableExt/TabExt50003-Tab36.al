@@ -1,17 +1,19 @@
 tableextension 50003 "Sales Header Ext." extends "Sales Header"
 {
+
     fields
     {
+
         // Add changes to table fields here
         field(50000; "ShipStation Order ID"; Text[20])
         {
             CaptionML = ENU = 'ShipStation Order ID', RUS = 'Идентификатор Заказа ShipStation ';
-            Editable = false;
+            // Editable = false;
         }
         field(50001; "ShipStation Order Key"; Text[50])
         {
             CaptionML = ENU = 'ShipStation Order Key', RUS = 'Ключ Заказа ShipStation';
-            Editable = false;
+            // Editable = false;
         }
         field(50002; "ShipStation Order Status"; Option)
         {
@@ -39,12 +41,12 @@ tableextension 50003 "Sales Header Ext." extends "Sales Header"
             CaptionML = ENU = 'ShipStation Insurance Cost', RUS = 'Стоимость страховки ShipStation';
             Editable = false;
         }
-        field(50006; "ShipStation Tracking No."; Text[30])
-        {
-            DataClassification = ToBeClassified;
-            CaptionML = ENU = 'ShipStation Tracking No.', RUS = 'Трек номер ShipStation';
-            Editable = false;
-        }
+        // field(50006; "ShipStation Tracking No."; Text[30])
+        // {
+        //     DataClassification = ToBeClassified;
+        //     CaptionML = ENU = 'ShipStation Tracking No.', RUS = 'Трек номер ShipStation';
+        //     Editable = false;
+        // }
         field(50007; "ShipStation Shipment Amount"; Decimal)
         {
             DataClassification = ToBeClassified;

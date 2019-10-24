@@ -3,23 +3,22 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
     layout
     {
         // Add changes to page layout here
-
         addafter("Shipping Agent Code")
         {
-            field("Shipping Agent Name"; GetShippingAgentName("Shipping Agent Code"))
+            field("Agent Name"; GetShippingAgentName("Shipping Agent Code"))
             {
                 ApplicationArea = All;
                 Style = Strong;
-                ShowCaption = false;
+                // ShowCaption = false;
             }
         }
         addafter("Shipping Agent Service Code")
         {
-            field("Shipping Agent Service Description"; GetShippingAgentServiceDescription("Shipping Agent Code", "Shipping Agent Service Code"))
+            field("Service Description"; GetShippingAgentServiceDescription("Shipping Agent Code", "Shipping Agent Service Code"))
             {
                 ApplicationArea = All;
                 Style = Strong;
-                ShowCaption = false;
+                // ShowCaption = false;
             }
         }
         addafter(Control1900201301)
@@ -63,11 +62,11 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                     ApplicationArea = All;
 
                 }
-                field("ShipStation Tracking No."; "ShipStation Tracking No.")
-                {
-                    ApplicationArea = All;
+                // field("ShipStation Tracking No."; "ShipStation Tracking No.")
+                // {
+                //     ApplicationArea = All;
 
-                }
+                // }
             }
         }
     }
