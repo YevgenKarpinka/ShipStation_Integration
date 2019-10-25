@@ -118,6 +118,26 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                         Message('%1 \%2', lblOrdersList, txtOrdersList);
                     end;
                 }
+                action("Get Rates")
+                {
+                    ApplicationArea = All;
+                    Image = CalculateShipment;
+
+                    trigger OnAction()
+                    var
+                        recSAS: Record "Shipping Agent Services";
+                        pageShippingRates: Page "Shipping Rates";
+                        SSMgt: Codeunit "ShipStation Mgt.";
+                    begin
+                        SSMgt.GetShippingRatesByCarrier(Rec);
+                        Commit();
+                        pageShippingRates.LookupMode(true);
+                        if pageShippingRates.RunModal() = Action::LookupOK then begin
+                            pageShippingRates.GetAgentServiceCodes(recSAS);
+                            Message('Service %1', recSAS."SS Code");
+                        end;
+                    end;
+                }
                 action("Create Label to Order")
                 {
                     ApplicationArea = All;

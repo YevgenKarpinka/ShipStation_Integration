@@ -13,6 +13,16 @@ tableextension 50005 "Shipping Agent Services Ext." extends "Shipping Agent Serv
             DataClassification = ToBeClassified;
             Editable = false;
         }
+        field(50002; "Shipment Cost"; Decimal)
+        {
+            DataClassification = ToBeClassified;
+            Editable = false;
+        }
+        field(50003; "Other Cost"; Decimal)
+        {
+            DataClassification = ToBeClassified;
+            Editable = false;
+        }
     }
 
     keys
