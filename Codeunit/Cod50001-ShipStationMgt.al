@@ -244,15 +244,21 @@ codeunit 50001 "ShipStation Mgt."
         _SH."ShipStation Order ID" := GetJSToken(_jsonObject, 'orderId').AsValue().AsText();
         _SH."ShipStation Order Key" := GetJSToken(_jsonObject, 'orderKey').AsValue().AsText();
         _SH."ShipStation Status" := CopyStr(GetJSToken(_jsonObject, 'orderStatus').AsValue().AsText(), 1, MaxStrLen(_SH."ShipStation Status"));
+        _SH."ShipStation Shipment Amount" := GetJSToken(_jsonObject, 'shippingAmount').AsValue().AsDecimal();
+
         case _SH."ShipStation Order Status" of
             _SH."ShipStation Order Status"::"Not Sent":
                 _SH."ShipStation Order Status" := _SH."ShipStation Order Status"::Sent;
             _SH."ShipStation Order Status"::Sent:
                 _SH."ShipStation Order Status" := _SH."ShipStation Order Status"::Updated;
         end;
-        _SH."ShipStation Shipment Amount" := GetJSToken(_jsonObject, 'shippingAmount').AsValue().AsDecimal();
-        if _SH."ShipStation Status" = lblAwaitingShipment then
+
+
+
+        if _SH."ShipStation Status" = lblAwaitingShipment then begin
             _SH."Package Tracking No." := '';
+            _SH."ShipStation Shipment ID" := '';
+        end;
         _SH.Modify();
     end;
 
@@ -301,6 +307,34 @@ codeunit 50001 "ShipStation Mgt."
         Message('Label Created and Attached to Warehouse Shipment %1', WhseShipDocNo);
     end;
 
+    procedure VoidLabel2OrderInShipStation(DocNo: Code[20]): Boolean
+    var
+        _SH: Record "Sales Header";
+        JSText: Text;
+        JSObject: JsonObject;
+        notExistOrdersList: Text;
+        OrdersListCreateLabel: Text;
+        OrdersCancelled: Text;
+        txtLabel: Text;
+        txtBeforeName: Text;
+        WhseShipDocNo: Code[20];
+    begin
+        if (DocNo = '') or (not _SH.Get(_SH."Document Type"::Order, DocNo)) or (_SH."ShipStation Shipment ID" = '') then exit(false);
+
+        // Void Label in Shipstation
+        JSObject.Add('shipmentId', _SH."ShipStation Shipment ID");
+        JSObject.WriteTo(JSText);
+        JSText := Connect2ShipStation(8, JSText, '');
+        JSObject.ReadFrom(JSText);
+
+        Message(GetJSToken(JSObject, 'message').AsValue().AsText(), '%1', WhseShipDocNo);
+
+        // Update Sales Header From ShipStation
+        JSText := Connect2ShipStation(1, '', StrSubstNo('/%1', _SH."ShipStation Order ID"));
+        JSObject.ReadFrom(JSText);
+        UpdateSalesHeaderFromShipStation(_SH."No.", JSObject);
+    end;
+
     local procedure UpdateOrderFromLabel(DocNo: Code[20]; jsonText: Text);
     var
         _SH: Record "Sales Header";
@@ -311,6 +345,7 @@ codeunit 50001 "ShipStation Mgt."
         _SH."ShipStation Insurance Cost" := GetJSToken(jsLabelObject, 'insuranceCost').AsValue().AsDecimal();
         _SH."ShipStation Shipment Cost" := GetJSToken(jsLabelObject, 'shipmentCost').AsValue().AsDecimal();
         _SH."Package Tracking No." := GetJSToken(jsLabelObject, 'trackingNumber').AsValue().AsText();
+        _SH."ShipStation Shipment ID" := GetJSToken(jsLabelObject, 'shipmentId').AsValue().AsText();
         _SH.Modify();
     end;
 
@@ -667,39 +702,33 @@ codeunit 50001 "ShipStation Mgt."
         if not ShippingAgent.FindFirst() then
             ShippingAgent.InsertCarrierFromShipStation(GetLastCarrierCode(), CopyStr(GetJSToken(JSObject, 'name').AsValue().AsText(), 1, MaxStrLen(ShippingAgent.Name)),
                                                        txtCarrierCode, GetJSToken(JSObject, 'shippingProviderId').AsValue().AsInteger());
-        // with ShippingAgent do begin
-        //     Init();
-        //     Code := GetLastCarrierCode();
-        //     Name := CopyStr(GetJSToken(JSObject, 'name').AsValue().AsText(), 1, MaxStrLen(ShippingAgent.Name));
-        //     "SS Code" := txtCarrierCode;
-        //     "SS Provider Id" := GetJSToken(JSObject, 'shippingProviderId').AsValue().AsInteger();
-        //     Insert();
-        // end;
         ShippingAgent.FindFirst();
         exit(ShippingAgent.Code);
     end;
 
+    // procedure GetCarriersFromShipStation(var _SA: Record "Shipping Agent" temporary; var _SAS: Record "Shipping Agent Services" temporary): Boolean
     procedure GetCarriersFromShipStation(): Boolean
     var
+        _SA: Record "Shipping Agent";
         JSText: Text;
         JSObject: JsonObject;
         CarriersJSArray: JsonArray;
         CarrierToken: JsonToken;
         Counter: Integer;
         txtCarrierCode: Text[20];
-        ShippingAgent: Record "Shipping Agent";
     begin
         JSText := Connect2ShipStation(4, '', '');
 
         CarriersJSArray.ReadFrom(JSText);
         foreach CarrierToken in CarriersJSArray do begin
-            txtCarrierCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'code').AsValue().AsText(), 1, MaxStrLen(ShippingAgent."SS Code"));
-            ShippingAgent.SetCurrentKey("SS Code");
-            ShippingAgent.SetRange("SS Code", txtCarrierCode);
-            if not ShippingAgent.FindFirst() then
-                ShippingAgent.InsertCarrierFromShipStation(GetLastCarrierCode(), CopyStr(GetJSToken(CarrierToken.AsObject(), 'name').AsValue().AsText(), 1, MaxStrLen(ShippingAgent.Name)),
+            txtCarrierCode := CopyStr(GetJSToken(CarrierToken.AsObject(), 'code').AsValue().AsText(), 1, MaxStrLen(_SA."SS Code"));
+            _SA.SetCurrentKey("SS Code");
+            _SA.SetRange("SS Code", txtCarrierCode);
+            if not _SA.FindFirst() then
+                // _SA.TempInsertCarrierFromShipStation(_SA, TempGetLastCarrierCode(_SA), CopyStr(GetJSToken(CarrierToken.AsObject(), 'name').AsValue().AsText(), 1, MaxStrLen(_SA.Name)),
+                //                                            txtCarrierCode, GetJSToken(CarrierToken.AsObject(), 'shippingProviderId').AsValue().AsInteger());
+                _SA.InsertCarrierFromShipStation(GetLastCarrierCode(), CopyStr(GetJSToken(CarrierToken.AsObject(), 'name').AsValue().AsText(), 1, MaxStrLen(_SA.Name)),
                                                            txtCarrierCode, GetJSToken(CarrierToken.AsObject(), 'shippingProviderId').AsValue().AsInteger());
-            GetServicesFromShipStation(txtCarrierCode);
         end;
         exit(true);
     end;
@@ -710,6 +739,17 @@ codeunit 50001 "ShipStation Mgt."
         lblSA_Code: Label 'SA-0001';
         lblSA_CodeFilter: Label 'SA-*';
     begin
+        ShippingAgent.SetFilter(Code, '%1', lblSA_CodeFilter);
+        if ShippingAgent.FindLast() then exit(IncStr(ShippingAgent.Code));
+        exit(lblSA_Code);
+    end;
+
+    local procedure TempGetLastCarrierCode(var ShippingAgent: Record "Shipping Agent" temporary): Code[10]
+    var
+        lblSA_Code: Label 'SA-0001';
+        lblSA_CodeFilter: Label 'SA-*';
+    begin
+        ShippingAgent.Reset();
         ShippingAgent.SetFilter(Code, '%1', lblSA_CodeFilter);
         if ShippingAgent.FindLast() then exit(IncStr(ShippingAgent.Code));
         exit(lblSA_Code);
@@ -766,18 +806,21 @@ codeunit 50001 "ShipStation Mgt."
         exit(lblSASCode);
     end;
 
+    // procedure GetShippingRatesByCarrier(_SH: Record "Sales Header"; var _SA: Record "Shipping Agent" temporary; var _SAS: Record "Shipping Agent Services" temporary)
     procedure GetShippingRatesByCarrier(_SH: Record "Sales Header")
     var
-        _SA: Record "Shipping Agent";
         TotalGrossWeight: Decimal;
     begin
         TotalGrossWeight := GetOrderGrossWeight(_SH);
         if not (TotalGrossWeight > 0) then Error(StrSubstNo(errTotalGrossWeightIsZero, TotalGrossWeight));
         // Update Carriers And Services
-        UpdateCarriersAndServices;
+        // UpdateCarriersAndServices(_SA, _SAS);
+
+        UpdateCarriersAndServices();
         // Init Shipping Amount
         InitShippingAmount();
         // Get Rates By Carrier From ShipStation
+        // GetRatesByCarrierFromShipStation(_SH, _SA, _SAS);
         GetRatesByCarrierFromShipStation(_SH);
     end;
 
@@ -798,19 +841,28 @@ codeunit 50001 "ShipStation Mgt."
         exit(TotalGrossWeight);
     end;
 
+    // procedure UpdateCarriersAndServices(var _SA: Record "Shipping Agent" temporary; var _SAS: Record "Shipping Agent Services" temporary)
     procedure UpdateCarriersAndServices()
+    var
+        _SA: Record "Shipping Agent";
     begin
-        GetCarriersFromShipStation();
+        // GetCarriersFromShipStation(_SA, _SAS);
+        if Confirm(confUpdateCarriersList, false, _SA.TableCaption) then
+            GetCarriersFromShipStation();
     end;
 
+    // procedure InitShippingAmount(_SAS: Record "Shipping Agent Services" temporary)
     procedure InitShippingAmount()
     var
         _SAS: Record "Shipping Agent Services";
     begin
-        _SAS.ModifyAll("Shipment Cost", 0);
-        _SAS.ModifyAll("Other Cost", 0);
+        with _SAS do begin
+            ModifyAll("Shipment Cost", 0);
+            ModifyAll("Other Cost", 0);
+        end;
     end;
 
+    // procedure GetRatesByCarrierFromShipStation(_SH: Record "Sales Header"; _SA: Record "Shipping Agent" temporary; var _SAS: Record "Shipping Agent Services" temporary)
     procedure GetRatesByCarrierFromShipStation(_SH: Record "Sales Header")
     var
         _SA: Record "Shipping Agent";
@@ -823,28 +875,24 @@ codeunit 50001 "ShipStation Mgt."
         if _SA.FindSet() then
             repeat
                 jsObject.Add('carrierCode', _SA."SS Code");
-                // "serviceCode": null,
-                //   "packageCode": null,
                 jsObject.Add('fromPostalCode', GetFromPostalCode(_SH."Location Code"));
-                // "toState": "DC",
                 jsObject.Add('toCountry', _SH."Sell-to Country/Region Code");
                 jsObject.Add('toPostalCode', _SH."Sell-to Post Code");
-                // "toCity": "Washington",
                 jsObject.Add('weight', jsonWeightFromItem(GetOrderGrossWeight(_SH)));
-                // "dimensions": {},
-                // "confirmation": "delivery",
-                //   "residential": false
                 jsObject.WriteTo(jsText);
 
                 JSText := Connect2ShipStation(7, jsText, '');
                 jsRatesArray.ReadFrom(jsText);
+
                 // update Shipping Cost into Shipping Agent Service
-                UpdateServiceCostsFromShipStation(_SA."SS Code", jsRatesArray);
+                // InsertServicesAndUpdateServiceCostsFromShipStation(_SA."SS Code", _SAS, jsRatesArray);
+                InsertServicesAndUpdateServiceCostsFromShipStation(_SA."SS Code", jsRatesArray);
                 Clear(jsObject);
             until _SA.Next() = 0;
     end;
 
-    procedure UpdateServiceCostsFromShipStation(CarrierCode: Text[20]; jsonRatesArray: JsonArray)
+    // procedure InsertServicesAndUpdateServiceCostsFromShipStation(CarrierCode: Text[20]; var _SAS: Record "Shipping Agent Services" temporary; jsonRatesArray: JsonArray)
+    procedure InsertServicesAndUpdateServiceCostsFromShipStation(CarrierCode: Text[20]; jsonRatesArray: JsonArray)
     var
         _SAS: Record "Shipping Agent Services";
         CarrierToken: JsonToken;
@@ -856,11 +904,15 @@ codeunit 50001 "ShipStation Mgt."
                 SetCurrentKey("SS Carrier Code", "SS Code");
                 SetRange("SS Carrier Code", CarrierCode);
                 SetRange("SS Code", ServiceCode);
-                if FindFirst() then begin
-                    "Shipment Cost" := GetJSToken(CarrierToken.AsObject(), 'shipmentCost').AsValue().AsDecimal();
-                    "Other Cost" := GetJSToken(CarrierToken.AsObject(), 'otherCost').AsValue().AsDecimal();
-                    Modify();
-                end;
+                if not FindFirst() then
+                    // Insert Services
+                    // TempInsertServicesFromShipStation(_SAS, GetCarrierCodeBySSAgentCode(CarrierCode), GetLastCarrierServiceCode(), CarrierCode, ServiceCode,
+                    //                           CopyStr(GetJSToken(CarrierToken.AsObject(), 'serviceName').AsValue().AsText(), 1, MaxStrLen(_SAS.Description)));
+                    InsertServicesFromShipStation(GetCarrierCodeBySSAgentCode(CarrierCode), GetLastCarrierServiceCode(), CarrierCode, ServiceCode,
+                                              CopyStr(GetJSToken(CarrierToken.AsObject(), 'serviceName').AsValue().AsText(), 1, MaxStrLen(_SAS.Description)));
+                "Shipment Cost" := GetJSToken(CarrierToken.AsObject(), 'shipmentCost').AsValue().AsDecimal();
+                "Other Cost" := GetJSToken(CarrierToken.AsObject(), 'otherCost').AsValue().AsDecimal();
+                Modify();
             end;
         end;
     end;
@@ -882,4 +934,5 @@ codeunit 50001 "ShipStation Mgt."
         errServiceIsNull: TextConst ENU = 'Not Service Into ShipStation In Order = %1', RUS = 'В Заказе = %1 ShipStation не оппределен Сервис';
         errTotalGrossWeightIsZero: TextConst ENU = 'Total Gross Weight Order = %1\But Must Be > 0', RUS = 'Общий Брутто вес Заказа = %1\Должен быть > 0';
         lblAwaitingShipment: Label 'awaiting_shipment';
+        confUpdateCarriersList: TextConst ENU = 'Update the list %1?', RUS = 'Обновить список %1?';
 }

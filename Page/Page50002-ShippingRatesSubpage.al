@@ -4,8 +4,9 @@ page 50002 "Shipping Rates Subpage"
     ApplicationArea = All;
     UsageCategory = Administration;
     SourceTable = "Shipping Agent Services";
-    SourceTableView = where("Shipment Cost" <> const(0))
-    
+    // SourceTableTemporary = true;
+    SourceTableView = where("Shipment Cost" = filter('<>0'));
+
     InsertAllowed = false;
     DeleteAllowed = false;
     Editable = false;
@@ -40,5 +41,10 @@ page 50002 "Shipping Rates Subpage"
     begin
         AgentCode := "Shipping Agent Code";
         ServiceCode := Code;
+    end;
+
+    procedure InitPage(_SAS: Record "Shipping Agent Services")
+    begin
+        Rec := _SAS;
     end;
 }

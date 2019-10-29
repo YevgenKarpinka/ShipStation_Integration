@@ -62,11 +62,11 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                     ApplicationArea = All;
 
                 }
-                // field("ShipStation Tracking No."; "ShipStation Tracking No.")
-                // {
-                //     ApplicationArea = All;
+                field("ShipStation Shipment ID"; "ShipStation Shipment ID")
+                {
+                    ApplicationArea = All;
 
-                // }
+                }
             }
         }
     }
@@ -125,15 +125,21 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
 
                     trigger OnAction()
                     var
+                        // recSAS: Record "Shipping Agent Services" temporary;
+                        // recSA: Record "Shipping Agent" temporary;
                         recSAS: Record "Shipping Agent Services";
                         pageShippingRates: Page "Shipping Rates";
                         SSMgt: Codeunit "ShipStation Mgt.";
                     begin
+                        // SSMgt.GetShippingRatesByCarrier(Rec, recSA, recSAS);
                         SSMgt.GetShippingRatesByCarrier(Rec);
+                        // pageShippingRates.InitPage(recSA, recSAS);
+                        // pageShippingRates.SetTableView(recSA);
                         Commit();
                         pageShippingRates.LookupMode(true);
                         if pageShippingRates.RunModal() = Action::LookupOK then begin
                             pageShippingRates.GetAgentServiceCodes(recSAS);
+                            UpdateAgentServiceRateSalesHeader(recSAS);
                             Message('Service %1', recSAS."SS Code");
                         end;
                     end;
@@ -153,6 +159,24 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                         if _SH.FindSet(false, false) then
                             repeat
                                 ShipStationMgt.CreateLabel2OrderInShipStation(_SH."No.");
+                            until _SH.Next() = 0;
+                    end;
+                }
+                action("Void Label to Order")
+                {
+                    ApplicationArea = All;
+                    Image = VoidCreditCard;
+
+                    trigger OnAction()
+                    var
+                        ShipStationMgt: Codeunit "ShipStation Mgt.";
+                        _SH: Record "Sales Header";
+                    begin
+                        CurrPage.SetSelectionFilter(_SH);
+                        ShipStationMgt.SetTestMode(true);
+                        if _SH.FindSet(false, false) then
+                            repeat
+                                ShipStationMgt.VoidLabel2OrderInShipStation(_SH."No.");
                             until _SH.Next() = 0;
                     end;
                 }

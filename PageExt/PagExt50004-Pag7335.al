@@ -25,11 +25,6 @@ pageextension 50004 "Warehouse Shipment Ext." extends "Warehouse Shipment"
         // Add changes to page actions here
     }
 
-    trigger OnAfterGetCurrRecord()
-    begin
-        // CurrPage.IncomingDocAttachFactBox.PAGE.LoadDataFromRecord(Rec);
-    end;
-
     var
         myInt: Integer;
 }

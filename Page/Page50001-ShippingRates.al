@@ -5,7 +5,7 @@ page 50001 "Shipping Rates"
     UsageCategory = Administration;
     SourceTable = "Shipping Agent";
     // SourceTableTemporary = true;
-    SourceTableView = sorting(Code) order(ascending);
+    SourceTableView = where("SS Code" = filter('<>'''''));
     Editable = false;
 
     layout
@@ -34,6 +34,12 @@ page 50001 "Shipping Rates"
         }
     }
 
+    trigger OnOpenPage()
+    begin
+        // CurrPage.subpageShippingRates.Page.InitPage(recSAS);
+        // CurrPage.subpageShippingRates.Page.SetTableView(recSAS);
+    end;
+
     trigger OnClosePage()
     begin
         CurrPage.subpageShippingRates.Page.GetAgentServiceCodes(AgentCode, ServiceCode);
@@ -44,7 +50,14 @@ page 50001 "Shipping Rates"
         _SAS.Get(AgentCode, ServiceCode);
     end;
 
+    procedure InitPage(_SA: Record "Shipping Agent"; _SAS: Record "Shipping Agent Services")
+    begin
+        Rec := _SA;
+        recSAS := _SAS;
+    end;
+
     var
+        recSAS: Record "Shipping Agent Services";
         AgentCode: Code[10];
         ServiceCode: Code[10];
 }

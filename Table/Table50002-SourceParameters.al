@@ -69,9 +69,9 @@ table 50002 "Source Parameters"
         field(11; "FSp Event"; Option)
         {
             CaptionML = ENU = 'FSp Event', RUS = 'FSp Событие';
-            OptionMembers = " ",getOrder,createOrder,createLabel,getCarriers,getServices,getCarrier,postRate;
-            OptionCaptionML = ENU = ' ,getOrder,createOrder,createLabel,getCarriers,getServices,getCarrier,postRate',
-                              RUS = ' ,получить Ордер,создать Ордер,создать Метку,получить Курьеров,получить Сервисы,получить Курьера,получить Стоимость';
+            OptionMembers = " ",getOrder,createOrder,createLabel,getCarriers,getServices,getCarrier,postRate,postVoidLabel;
+            OptionCaptionML = ENU = ' ,getOrder,createOrder,createLabel,getCarriers,getServices,getCarrier,postRate,postVoidLabel',
+                              RUS = ' ,получить Ордер,создать Ордер,создать Метку,получить Курьеров,получить Сервисы,получить Курьера,получить Стоимость,отменить Метку';
             NotBlank = true;
         }
         field(12; "HTTP Status Ok"; Integer)

@@ -39,10 +39,10 @@ tableextension 50006 "Sales Invoice Header Ext." extends "Sales Invoice Header"
             CaptionML = ENU = 'ShipStation Insurance Cost', RUS = 'Сума страховки ShipStation';
             Editable = false;
         }
-        field(50006; "ShipStation Tracking No."; Text[30])
+        field(50006; "ShipStation Shipment ID"; Text[30])
         {
             DataClassification = ToBeClassified;
-            CaptionML = ENU = 'ShipStation Tracking No.', RUS = 'Трек номер ShipStation';
+            CaptionML = ENU = 'ShipStation Shipment ID', RUS = 'ID Отгрузки ShipStation';
             Editable = false;
         }
         field(50007; "ShipStation Shipment Amount"; Decimal)

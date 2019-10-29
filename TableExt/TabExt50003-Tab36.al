@@ -41,12 +41,12 @@ tableextension 50003 "Sales Header Ext." extends "Sales Header"
             CaptionML = ENU = 'ShipStation Insurance Cost', RUS = 'Стоимость страховки ShipStation';
             Editable = false;
         }
-        // field(50006; "ShipStation Tracking No."; Text[30])
-        // {
-        //     DataClassification = ToBeClassified;
-        //     CaptionML = ENU = 'ShipStation Tracking No.', RUS = 'Трек номер ShipStation';
-        //     Editable = false;
-        // }
+        field(50006; "ShipStation Shipment ID"; Text[30])
+        {
+            DataClassification = ToBeClassified;
+            CaptionML = ENU = 'ShipStation Shipment ID', RUS = 'ID Отгрузки ShipStation';
+            Editable = false;
+        }
         field(50007; "ShipStation Shipment Amount"; Decimal)
         {
             DataClassification = ToBeClassified;
@@ -81,5 +81,14 @@ tableextension 50003 "Sales Header Ext." extends "Sales Header"
             exit(_SAS.Description)
         else
             exit('')
+    end;
+
+    procedure UpdateAgentServiceRateSalesHeader(SAS: Record "Shipping Agent Services")
+    begin
+        Validate("Shipping Agent Code", SAS."Shipping Agent Code");
+        Validate("Shipping Agent Service Code", SAS.Code);
+        "ShipStation Shipment Cost" := SAS."Shipment Cost";
+        "ShipStation Insurance Cost" := SAS."Other Cost";
+        Modify(true);
     end;
 }
