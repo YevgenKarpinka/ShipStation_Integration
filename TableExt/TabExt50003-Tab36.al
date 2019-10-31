@@ -7,7 +7,7 @@ tableextension 50003 "Sales Header Ext." extends "Sales Header"
         // Add changes to table fields here
         field(50000; "ShipStation Order ID"; Text[20])
         {
-            CaptionML = ENU = 'ShipStation Order ID', RUS = 'Идентификатор Заказа ShipStation ';
+            CaptionML = ENU = 'ShipStation Order ID', RUS = 'Идентификатор Заказа ShipStation';
             // Editable = false;
         }
         field(50001; "ShipStation Order Key"; Text[50])
