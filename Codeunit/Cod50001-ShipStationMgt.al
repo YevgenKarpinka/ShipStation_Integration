@@ -279,6 +279,7 @@ codeunit 50001 "ShipStation Mgt."
         WhseShipDocNo: Code[20];
     begin
         if (DocNo = '') or (not _SH.Get(_SH."Document Type"::Order, DocNo)) or (_SH."ShipStation Order ID" = '') then exit(false);
+        // if not FindWarehouseSipment(DocNo, WhseShipDocNo) then exit(false); // comment to test Create Label and Attache to Warehouse Shipment
 
         // Get Order from Shipstation to Fill Variables
         JSText := Connect2ShipStation(1, '', StrSubstNo('/%1', _SH."ShipStation Order ID"));
@@ -289,7 +290,6 @@ codeunit 50001 "ShipStation Mgt."
         // Update Order From Label
         UpdateOrderFromLabel(DocNo, JSText);
 
-        // FindWarehouseSipment(DocNo, WhseShipDocNo); // comment to test Create Label and Attache to Warehouse Shipment
         WhseShipDocNo := '111'; // code to test attache
 
         // Add Lable to Shipment
@@ -349,7 +349,7 @@ codeunit 50001 "ShipStation Mgt."
         _SH.Modify();
     end;
 
-    local procedure FindWarehouseSipment(_DocNo: Code[20]; var _WhseShipDcoNo: Code[20])
+    local procedure FindWarehouseSipment(_DocNo: Code[20]; var _WhseShipDcoNo: Code[20]): Boolean
     var
         WhseShipLine: Record "Warehouse Shipment Line";
     begin
@@ -358,9 +358,12 @@ codeunit 50001 "ShipStation Mgt."
             SetRange("Source Type", Database::"Sales Header");
             SetRange("Source Subtype", 1);
             SetRange("Source No.", _DocNo);
-            FindFirst();
-            _WhseShipDcoNo := "No.";
+            if FindFirst() then begin
+                _WhseShipDcoNo := "No.";
+                exit(true);
+            end;
         end;
+        exit(false);
     end;
 
     local procedure SaveLabel2Shipment(_txtBefore: Text; _txtLabelBase64: Text; _WhseShipDocNo: Code[20])

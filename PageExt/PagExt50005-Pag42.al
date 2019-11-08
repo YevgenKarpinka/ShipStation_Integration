@@ -154,8 +154,8 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                         ShipStationMgt: Codeunit "ShipStation Mgt.";
                         _SH: Record "Sales Header";
                     begin
-                        CurrPage.SetSelectionFilter(_SH);
-                        ShipStationMgt.SetTestMode(true);
+                        // CurrPage.SetSelectionFilter(_SH);
+                        // ShipStationMgt.SetTestMode(true);
                         if _SH.FindSet(false, false) then
                             repeat
                                 ShipStationMgt.CreateLabel2OrderInShipStation(_SH."No.");
@@ -172,8 +172,8 @@ pageextension 50005 "Sales Order Ext." extends "Sales Order"
                         ShipStationMgt: Codeunit "ShipStation Mgt.";
                         _SH: Record "Sales Header";
                     begin
-                        CurrPage.SetSelectionFilter(_SH);
-                        ShipStationMgt.SetTestMode(true);
+                        // CurrPage.SetSelectionFilter(_SH);
+                        // ShipStationMgt.SetTestMode(true);
                         if _SH.FindSet(false, false) then
                             repeat
                                 ShipStationMgt.VoidLabel2OrderInShipStation(_SH."No.");

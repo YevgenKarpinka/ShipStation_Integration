@@ -108,9 +108,27 @@ pageextension 50003 "Sales Order List Ext." extends "Sales Order List"
                             until _SH.Next() = 0;
                     end;
                 }
-            }
-        }
+                action("Void Label to Order")
+                {
+                    ApplicationArea = All;
+                    Image = VoidCreditCard;
 
+                    trigger OnAction()
+                    var
+                        ShipStationMgt: Codeunit "ShipStation Mgt.";
+                        _SH: Record "Sales Header";
+                    begin
+                        CurrPage.SetSelectionFilter(_SH);
+                        // ShipStationMgt.SetTestMode(true);
+                        if _SH.FindSet(false, false) then
+                            repeat
+                                ShipStationMgt.VoidLabel2OrderInShipStation(_SH."No.");
+                            until _SH.Next() = 0;
+                    end;
+                }
+            }
+
+        }
     }
 
     var
